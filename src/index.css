@@ -1,0 +1,547 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   EYECORE LABS — "Nature School" comic design system.
+   Cartoon outdoors: sky-blue paper, deep pine ink, sun yellow + leaf green.
+   Baloo 2 (display, Vietnamese) + Nunito (body) bundled locally.
+   Everything animates on transform/opacity only — 60fps compositing.
+--------------------------------------------------------------------------- */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-overlay: var(--overlay);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-inkline: var(--inkline);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-hi: var(--accent-hi);
+  --color-accent-soft: var(--accent-soft);
+  --color-onaccent: var(--on-accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-sun: var(--sun);
+  --color-sky: var(--sky);
+  --font-display: "Baloo 2 Variable", "Baloo 2", ui-rounded, "Manrope Variable", system-ui, sans-serif;
+  --font-body: "Nunito Variable", "Nunito", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #cfe7f5;
+  --bg-deep: #b7daf0;
+  --panel: rgba(255, 255, 250, 0.86);
+  --raised: rgba(255, 255, 250, 0.9);
+  --overlay: rgba(28, 44, 58, 0.42);
+  --line: rgba(34, 58, 43, 0.16);
+  --line-strong: rgba(34, 58, 43, 0.3);
+  --ink: #223a2b;
+  --inkline: #223a2b;
+  --muted: #4c6a54;
+  --faint: #7d957f;
+  --accent: #3d9b5f;
+  --accent-hi: #2e7a49;
+  --accent-soft: rgba(61, 155, 95, 0.14);
+  --on-accent: #f4fbf2;
+  --success: #3d9b5f;
+  --warning: #e0a52e;
+  --danger: #e2694f;
+  --sun: #ffd23f;
+  --sky: #bfe3f5;
+  --shadow-ink: rgba(34, 58, 43, 0.18);
+  --shadow-soft: rgba(34, 58, 43, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(255, 210, 63, 0.55);
+  color: var(--ink);
+}
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+@layer components {
+/* ------------------------------- surfaces ------------------------------- */
+.glass {
+  background: var(--panel);
+  border: 2.5px solid var(--line-strong);
+  border-radius: 12px;
+  box-shadow: 6px 7px 0 var(--shadow-soft);
+}
+.glass-plain {
+  background: var(--panel);
+  border: 2.5px solid var(--line-strong);
+  border-radius: 8px;
+}
+.no-glass .glass,
+.no-glass .glass-plain {
+  background: rgba(255, 255, 250, 0.97);
+}
+.chip-square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid var(--inkline);
+  border-radius: 8px;
+  background: var(--raised);
+}
+
+/* comic buttons — springy press-down feel */
+.btn-comic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 3px solid var(--inkline);
+  border-radius: 7px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 4px 4px 0 var(--shadow-ink);
+  transition:
+    transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.18s ease;
+  cursor: pointer;
+  user-select: none;
+  will-change: transform;
+}
+.btn-comic:hover {
+  transform: translate(-1px, -3px);
+  box-shadow: 6px 8px 0 var(--shadow-ink);
+}
+.btn-comic:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--shadow-ink);
+  transition-duration: 0.06s;
+}
+.btn-accent { background: var(--accent); color: var(--on-accent); }
+.btn-sun { background: var(--sun); color: var(--ink); }
+.btn-paper { background: var(--raised); color: var(--ink); }
+.btn-danger { background: var(--raised); color: var(--danger); }
+
+/* shine sweep on the primary CTA */
+.shine { position: relative; overflow: hidden; }
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.6) 50%, transparent 60%);
+  transform: translateX(-120%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+.shine:hover::after { transform: translateX(120%); }
+
+/* ------------------------- making info pop on sky ------------------------- */
+/* soft white halo behind text so details lift off the living backdrop */
+.ink-pop {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 250, 0.95),
+    0 0 18px rgba(255, 255, 250, 0.7),
+    0 0 8px rgba(255, 255, 250, 0.55),
+    0 2px 10px rgba(255, 255, 250, 0.5);
+}
+/* ambient paper glow behind the whole home profile column — two stacked
+   layers: a near-solid core for the content, a wider soft fringe that
+   melts into the sky. No box, no border — just light. */
+.profile-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(820px, 140vw);
+  height: 132%;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(ellipse 46% 44% at 50% 50%, rgba(255, 255, 250, 0.94) 0%, rgba(255, 255, 250, 0.84) 48%, rgba(255, 255, 250, 0) 72%),
+    radial-gradient(ellipse 60% 58% at 50% 50%, rgba(255, 255, 250, 0.5) 0%, rgba(255, 255, 250, 0.22) 55%, rgba(255, 255, 250, 0) 78%);
+  pointer-events: none;
+}
+.pop-chip {
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 250, 0.55),
+    0 3px 12px rgba(34, 58, 43, 0.14);
+}
+/* yellow highlighter swipe behind headline words */
+.marker {
+  background-image: linear-gradient(
+    104deg,
+    rgba(255, 210, 63, 0) 0.9%,
+    rgba(255, 210, 63, 0.85) 2.4%,
+    rgba(255, 210, 63, 0.6) 5.8%,
+    rgba(255, 210, 63, 0.6) 93%,
+    rgba(255, 210, 63, 0.9) 96%,
+    rgba(255, 210, 63, 0) 98%
+  );
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* ------------------------------ form controls ----------------------------- */
+.field {
+  width: 100%;
+  background: var(--raised);
+  border: 2.5px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+}
+.field::placeholder { color: var(--faint); }
+.field:hover { border-color: var(--inkline); }
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft), 3px 3px 0 var(--shadow-soft);
+}
+input, select, textarea { font-family: inherit; }
+input[type="date"] { color-scheme: inherit; }
+
+/* --------------------------------- tooltip -------------------------------- */
+.tip { position: relative; }
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 9px);
+  transform: translateX(-50%) translateY(4px);
+  background: var(--raised);
+  border: 2px solid var(--inkline);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 70;
+  box-shadow: 2px 2px 0 var(--shadow-soft);
+}
+.tip:hover::after,
+.tip:focus-within::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ------------------------------ social buttons ---------------------------- */
+.social-btn {
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.18s ease,
+    border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+}
+.social-btn:hover,
+.social-btn:focus-visible {
+  color: var(--brand);
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 12%, #fffaf0);
+  transform: scale(1.12) rotate(-3deg);
+  box-shadow: 3px 4px 0 color-mix(in srgb, var(--brand) 30%, transparent);
+}
+.social-btn:active { transform: scale(0.94); }
+} /* end @layer components */
+
+/* ------------------------------ depth layers ------------------------------ */
+/* paper grain over everything — crisp at display resolution, near-free */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+.cursor-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 214, 92, 0.2), rgba(255, 214, 92, 0) 62%);
+  will-change: transform;
+}
+
+/* -------------------------------- backdrop ------------------------------- */
+/* The painted scene lives at z-0; app content (main) sits at z-1 and is
+   fully transparent — nothing can ever cover the scene. Overscanned so the
+   pointer parallax never reveals an edge. */
+.app-backdrop {
+  position: fixed;
+  inset: -36px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(760px 760px at calc(100% - 96px) 44px, rgba(255, 236, 170, 0.6), transparent 62%),
+    linear-gradient(180deg, #dceef9 0%, var(--bg) 42%, var(--bg-deep) 100%);
+  will-change: transform;
+  transform: translateZ(0);
+}
+.sun-rays {
+  animation: sun-spin 46s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes sun-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ----------------------------- sky inhabitants ---------------------------- */
+.cloud-drift {
+  position: absolute;
+  left: 0;
+  animation: cloud-drift var(--dur, 120s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+@keyframes cloud-drift {
+  from { transform: translateX(-30vw); }
+  to { transform: translateX(112vw); }
+}
+
+.bird-fly {
+  position: absolute;
+  left: 0;
+  animation: bird-fly var(--dur, 38s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+@keyframes bird-fly {
+  from { transform: translateX(-12vw); }
+  to { transform: translateX(112vw); }
+}
+.bird-bob { animation: bird-bob var(--bob, 3s) ease-in-out infinite; }
+@keyframes bird-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.bird-wing {
+  animation: wing-flap 0.5s ease-in-out infinite alternate;
+  transform-origin: 12px 10px;
+}
+.bird-wing.far {
+  animation-duration: 0.58s;
+  animation-delay: 0.09s;
+}
+@keyframes wing-flap {
+  from { transform: rotate(26deg); }
+  to { transform: rotate(-30deg); }
+}
+
+.plane-fly {
+  animation: plane-fly var(--dur, 26s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+@keyframes plane-fly {
+  0% { transform: translate(-14vw, 0) rotate(6deg); }
+  25% { transform: translate(24vw, -7vh) rotate(0deg); }
+  50% { transform: translate(54vw, 2vh) rotate(9deg); }
+  75% { transform: translate(84vw, -6vh) rotate(2deg); }
+  100% { transform: translate(114vw, 1vh) rotate(7deg); }
+}
+
+.balloon-bob { animation: balloon-bob 7s ease-in-out infinite; }
+@keyframes balloon-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-20px) rotate(3deg); }
+}
+.kite-bob {
+  animation: kite-bob var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
+  transform-origin: 50% 20%;
+}
+@keyframes kite-bob {
+  0%, 100% { transform: translateY(0) rotate(7deg); }
+  50% { transform: translateY(-16px) rotate(-9deg); }
+}
+
+.butterfly-drift { animation: butterfly-drift var(--dur, 7s) ease-in-out var(--delay, 0s) infinite; }
+@keyframes butterfly-drift {
+  0%, 100% { transform: translate(0, 0) rotate(-6deg); }
+  25% { transform: translate(14px, -12px) rotate(5deg); }
+  50% { transform: translate(-8px, -22px) rotate(-4deg); }
+  75% { transform: translate(-16px, -8px) rotate(7deg); }
+}
+.butterfly-wing {
+  transform-box: fill-box;
+  animation: butterfly-flap 0.22s ease-in-out infinite alternate;
+}
+.butterfly-wing.l { transform-origin: right center; }
+.butterfly-wing.r { transform-origin: left center; }
+@keyframes butterfly-flap {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.35); }
+}
+
+.bee-fly { animation: bee-fly var(--dur, 9s) ease-in-out var(--delay, 0s) infinite; }
+@keyframes bee-fly {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(26px, -14px) rotate(8deg); }
+  50% { transform: translate(48px, 2px) rotate(-4deg); }
+  75% { transform: translate(22px, 14px) rotate(6deg); }
+}
+.bee-wing {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: bee-flap 0.12s linear infinite alternate;
+}
+@keyframes bee-flap {
+  from { transform: scaleY(1); }
+  to { transform: scaleY(0.45); }
+}
+
+.snail-crawl {
+  animation: snail-crawl 95s linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+@keyframes snail-crawl {
+  from { transform: translateX(-10vw); }
+  to { transform: translateX(106vw); }
+}
+
+.leaf-fall-soft {
+  position: absolute;
+  top: 0;
+  animation: leaf-fall-soft var(--dur, 24s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+@keyframes leaf-fall-soft {
+  from { transform: translate3d(0, -8vh, 0) rotate(0deg); }
+  to { transform: translate3d(0, 110vh, 0) rotate(var(--spin, 240deg)); }
+}
+.leaf-sway-soft {
+  display: block;
+  animation: leaf-sway-soft var(--sway, 3.4s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes leaf-sway-soft {
+  from { transform: translateX(calc(var(--amp, 16px) * -1)) rotate(-14deg); }
+  to { transform: translateX(var(--amp, 16px)) rotate(16deg); }
+}
+
+.puff-drift { animation: puff-drift var(--dur, 18s) linear var(--delay, 0s) infinite; }
+@keyframes puff-drift {
+  0% { transform: translate(0, 30px) rotate(0deg); opacity: 0; }
+  12% { opacity: 0.9; }
+  85% { opacity: 0.9; }
+  100% { transform: translate(70px, -160px) rotate(120deg); opacity: 0; }
+}
+
+.sparkle-twinkle {
+  animation: sparkle-twinkle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.6) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.15) rotate(20deg); }
+}
+
+/* ------------------------------ ground life ------------------------------ */
+.tree-sway {
+  transform-origin: 50% 100%;
+  animation: tree-sway var(--sway, 7s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes tree-sway {
+  from { transform: rotate(-1.4deg); }
+  to { transform: rotate(1.4deg); }
+}
+.flower-sway {
+  transform-origin: 50% 100%;
+  animation: flower-sway 3.4s ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes flower-sway {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(6deg); }
+}
+.sticker-bob {
+  animation: sticker-bob 4.6s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes sticker-bob {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50% { transform: translateY(-9px) rotate(1.4deg); }
+}
+
+/* When the full profile (or the intro) is open, freeze every ambient
+   animation under the overlay: the blur then samples a static frame and
+   the exit reveals an already-painted screen — no mid-flight repaints. */
+.freeze-scene .app-backdrop,
+.freeze-scene .app-backdrop *,
+.freeze-scene main * {
+  animation-play-state: paused !important;
+}
+.freeze-scene .cursor-glow { display: none; }
+
+/* on small screens, drop the busiest extras to hold 60fps */
+@media (max-width: 640px) {
+  .fx-extra { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .sun-rays, .cloud-drift, .bird-bob, .bird-wing, .tree-sway, .flower-sway,
+  .sticker-bob, .balloon-bob, .kite-bob, .butterfly-drift, .butterfly-wing,
+  .bee-fly, .bee-wing, .sparkle-twinkle {
+    animation: none !important;
+  }
+  .bird-fly, .plane-fly, .snail-crawl, .leaf-fall-soft, .puff-drift,
+  .cursor-glow {
+    display: none;
+  }
+  .shine::after { display: none; }
+}
+.anim-off *,
+.anim-off *::before,
+.anim-off *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+}
+.anim-off .cursor-glow,
+.anim-off .shine::after { display: none; }

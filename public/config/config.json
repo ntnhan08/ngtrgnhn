@@ -1,0 +1,90 @@
+{
+  "app": {
+    "name": "EYECORE LABS",
+    "version": "1.0.0",
+    "description": ""
+  },
+
+  "profile": {
+    "avatar": "",
+    "fullName": "Nguyen Trong Nhan",
+    "phone": "0973937991",
+    "email": "ntnhan21008@gmail.com",
+
+    "education": {
+      "school": "PTIT",
+      "major": "Information Technology",
+      "year": "2026 - Present"
+    },
+
+    "work": {
+      "company": "None",
+      "position": ""
+    },
+
+    "relationship": {
+      "status": "dating"
+    },
+
+    "bank": {
+      "bankName": "TechcomBank",
+      "accountNumber": "8721102008"
+    },
+
+    "address": "",
+    "birthday": "",
+    "notes": ""
+  },
+
+  "visibility": {
+    "phone": true,
+    "email": true,
+    "education": true,
+    "major": true,
+    "work": false,
+    "company": false,
+    "position": true,
+    "relationship": true,
+    "bank": true,
+    "bankName": true,
+    "bankAccount": true,
+    "birthday": false,
+    "address": false,
+    "notes": false
+  },
+
+  "social": {
+    "facebook": { "enabled": true, "url": "https://facebook.com/ngtrgnhn" },
+    "instagram": { "enabled": false, "url": "https://instagram.com/example" },
+    "tiktok": { "enabled": true, "url": "https://tiktok.com/@_bbinn_" },
+    "youtube": { "enabled": false, "url": "" },
+    "github": { "enabled": true, "url": "https://github.com/eyecorelabs" },
+    "linkedin": { "enabled": false, "url": "" },
+    "zalo": { "enabled": false, "url": "" },
+    "x": { "enabled": false, "url": "" },
+    "discord": { "enabled": false, "url": "" },
+    "telegram": { "enabled": false, "url": "" },
+    "threads": { "enabled": false, "url": "" },
+    "snapchat": { "enabled": false, "url": "" }
+  },
+
+  "features": {
+    "search": true,
+    "filter": true,
+    "sorting": true,
+    "backup": true,
+    "import": true,
+    "privacyMode": true,
+    "darkMode": true,
+    "lightMode": true,
+    "timeline": true
+  },
+
+  "appearance": {
+    "defaultTheme": "light",
+    "defaultLayout": "grid",
+    "animations": true,
+    "cardTilt": true,
+    "glassEffect": true
+  }
+}

@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>EYECORE LABS — Personal Contact Vault</title>
+    <meta
+      name="description"
+      content="A private, offline-first contact vault. Every byte of data stays on your device."
+    />
+    <meta name="theme-color" content="#cfe7f5" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+    <link rel="apple-touch-icon" href="icons/icon.svg" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="EYECORE LABS" />
+    <script>
+      /* The whole intro is pure CSS and starts the instant this file is
+         parsed — before any JavaScript executes. React only dissolves the
+         overlay out at the exact end of the sequence; it never interrupts.
+
+         Timeline (mirrored by the constants in src/App.tsx):
+           0.25s  the eye fades in — big, dead-centre of the sun circle
+           0.60s  it blinks 3 times (0.45s each) → done at 1.95s
+           2.05s  it flips (rotateY) and settles into the "O" slot → 2.75s
+           2.85s  letters pop one by one: E Y E C [eye] R E · L A B S
+                  (the O is skipped — the eye already lives there)
+           4.35s  the underline sweeps across (0.6s) → done at 4.95s
+           +2.00s the exact requested hold → hand-off at 6.95s
+           +0.55s dissolve → the app beneath is fully visible            */
+      window.__pvIntroStart = Date.now();
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #cfe7f5;
+      }
+      :root {
+        --si-ink: #223a2b;
+        --si-eye-in: 0.25s;
+        --si-blink-start: 0.6s;
+        --si-blink-dur: 0.45s;
+        --si-flight-start: 2.05s;
+        --si-flight-dur: 0.7s;
+        --si-letters-start: 2.85s;
+        --si-step: 0.1s;
+        --si-line: 4.35s;
+        --si-line-dur: 0.6s;
+        --si-cap: 4.6s;
+      }
+      #static-intro {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        background: linear-gradient(180deg, #dceef9 0%, #cfe7f5 42%, #b9dbee 100%);
+        font-family: "Baloo 2 Variable", "Baloo 2", ui-rounded, system-ui, sans-serif;
+        /* React adds .si-exit at the exact end of the sequence; the native
+           CSS choreography plays untouched until then. */
+        transition: opacity 0.55s ease;
+      }
+      #static-intro.si-exit {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .si-rays {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 62vmin;
+        height: 62vmin;
+        margin: -31vmin 0 0 -31vmin;
+        opacity: 0.45;
+        animation: si-spin 60s linear infinite;
+      }
+      @keyframes si-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .si-wrap {
+        position: relative;
+        width: 100%;
+        max-width: 56rem;
+        padding: 0 1rem;
+        text-align: center;
+      }
+      .si-name {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: min(11.5vw, 86px);
+        line-height: 1;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+      }
+      .si-l {
+        display: inline-block;
+        opacity: 0;
+        animation: si-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        animation-delay: calc(var(--si-letters-start) + var(--d) * var(--si-step));
+      }
+      @keyframes si-pop {
+        from {
+          opacity: 0;
+          transform: translateY(46px) rotate(9deg) scale(0.7);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) rotate(0) scale(1);
+        }
+      }
+      .si-ink {
+        color: var(--si-ink);
+        text-shadow: 0.055em 0.065em 0 #bfe3f5, 0.11em 0.13em 0 rgba(34, 58, 43, 0.16);
+      }
+      .si-labs {
+        color: #ffd23f;
+        -webkit-text-stroke: 2.5px var(--si-ink);
+        text-shadow: 0.075em 0.085em 0 rgba(34, 58, 43, 0.16);
+      }
+      .si-gap {
+        width: 0.34em;
+      }
+
+      /* ------------------------------ the eye ------------------------------ */
+      /* The eye is born inside the "O" slot. It appears at the centre of the
+         sun circle (≈0.85em right of the slot) at a big, comfortable size,
+         blinks, then flips and settles into the O — its "home" is exactly
+         where the O belongs, so no measuring is ever needed. */
+      .si-oslot {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 0.85em;
+        height: 0.85em;
+        perspective: 420px;
+      }
+      .si-eye-pos {
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+        animation:
+          si-eye-in 0.3s ease-out var(--si-eye-in) both,
+          si-eye-fly var(--si-flight-dur) cubic-bezier(0.3, 1.15, 0.45, 1) var(--si-flight-start) both;
+        will-change: transform, opacity;
+      }
+      @keyframes si-eye-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes si-eye-fly {
+        from {
+          /* dead-centre of the sun circle, big, facing away to start */
+          transform: translate(0.85em, 0) scale(2.2) rotateY(180deg);
+        }
+        to {
+          /* settles into the O at letter size, facing forward */
+          transform: translate(0, 0) scale(1) rotateY(0deg);
+        }
+      }
+      .si-eye-blink {
+        display: inline-flex;
+        width: 100%;
+        height: 100%;
+        transform-origin: 50% 55%;
+        animation:
+          si-blink var(--si-blink-dur) ease-in-out var(--si-blink-start) 3,
+          si-blink 3.4s ease-in-out 4.7s infinite;
+      }
+      @keyframes si-blink {
+        0%,
+        100% {
+          transform: scaleY(1);
+        }
+        50% {
+          transform: scaleY(0.06);
+        }
+      }
+      .si-eye-svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ---------------------------- the underline --------------------------- */
+      .si-curve {
+        position: absolute;
+        left: 50%;
+        top: 88%;
+        width: 114%;
+        height: 16%;
+        transform: translateX(-50%);
+        overflow: visible;
+      }
+      .si-c1,
+      .si-c2 {
+        fill: none;
+        stroke-linecap: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        animation: si-draw var(--si-line-dur) ease-in-out forwards;
+      }
+      .si-c1 {
+        stroke: var(--si-ink);
+        stroke-width: 11;
+        animation-delay: var(--si-line);
+      }
+      .si-c2 {
+        stroke: #3d9b5f;
+        stroke-width: 5.5;
+        animation-delay: calc(var(--si-line) + 0.1s);
+      }
+      @keyframes si-draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      .si-cap {
+        position: fixed;
+        top: 64%;
+        left: 0;
+        right: 0;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 15px;
+        font-weight: 700;
+        color: #4c6a54;
+        opacity: 0;
+        animation: si-fade 0.45s ease var(--si-cap) forwards;
+      }
+      @keyframes si-fade {
+        to {
+          opacity: 1;
+        }
+      }
+      .si-dots i {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-left: 4px;
+        border-radius: 50%;
+        background: #3d9b5f;
+        animation: si-dot 0.9s ease-in-out infinite;
+      }
+      .si-dots i:nth-child(2) {
+        animation-delay: 0.16s;
+      }
+      .si-dots i:nth-child(3) {
+        animation-delay: 0.32s;
+      }
+      @keyframes si-dot {
+        0%,
+        100% {
+          opacity: 0.2;
+          transform: translateY(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateY(-3px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .si-rays,
+        .si-dots i,
+        .si-eye-pos,
+        .si-eye-blink {
+          animation: none;
+        }
+        .si-l {
+          animation: none;
+          opacity: 1;
+        }
+        .si-c1,
+        .si-c2 {
+          animation: none;
+          stroke-dashoffset: 0;
+        }
+        .si-cap {
+          animation: none;
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Pre-JS intro: lives OUTSIDE #root so React can never interrupt it. -->
+    <div id="static-intro" aria-label="EYECORE LABS">
+      <svg class="si-rays" viewBox="0 0 200 200" aria-hidden="true">
+        <g>
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(0 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(30 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(60 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(90 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(120 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(150 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(180 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(210 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(240 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(270 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(300 100 100)" />
+          <rect x="97" y="4" width="6" height="26" rx="3" fill="#ffd23f" stroke="#223a2b" stroke-width="2" transform="rotate(330 100 100)" />
+        </g>
+      </svg>
+      <div class="si-wrap">
+        <p class="si-name">
+          <span class="si-l si-ink" style="--d: 0">E</span><span class="si-l si-ink" style="--d: 1">Y</span><span class="si-l si-ink" style="--d: 2">E</span><span class="si-l si-ink" style="--d: 3">C</span><span
+            class="si-oslot"
+          >
+            <span class="si-eye-pos">
+              <span class="si-eye-blink">
+                <svg class="si-eye-svg" viewBox="0 0 100 100" aria-hidden="true">
+                  <g stroke="#223a2b" stroke-width="5" stroke-linecap="round" fill="none">
+                    <path d="M24 16 L30 25" />
+                    <path d="M50 9 L50 20" />
+                    <path d="M76 16 L70 25" />
+                  </g>
+                  <ellipse cx="50" cy="58" rx="42" ry="37" fill="#ffffff" stroke="#223a2b" stroke-width="6" />
+                  <circle cx="50" cy="60" r="19" fill="#3d9b5f" stroke="#223a2b" stroke-width="4" />
+                  <circle cx="50" cy="60" r="8.5" fill="#223a2b" />
+                  <circle cx="56.5" cy="53.5" r="4.5" fill="#ffffff" />
+                </svg>
+              </span>
+            </span>
+          </span>
+          <span class="si-l si-ink" style="--d: 4">R</span><span class="si-l si-ink" style="--d: 5">E</span><span class="si-gap"></span><span class="si-l si-labs" style="--d: 6">L</span><span class="si-l si-labs" style="--d: 7">A</span><span class="si-l si-labs" style="--d: 8">B</span><span class="si-l si-labs" style="--d: 9">S</span>
+        </p>
+        <svg class="si-curve" viewBox="0 0 420 44" preserveAspectRatio="none" aria-hidden="true">
+          <path class="si-c1" pathLength="1" d="M8 30 C 84 6, 152 42, 218 24 C 284 6, 344 36, 412 12" />
+          <path class="si-c2" pathLength="1" d="M8 30 C 84 6, 152 42, 218 24 C 284 6, 344 36, 412 12" />
+        </svg>
+      </div>
+      <p class="si-cap">
+        opening your field guide<span class="si-dots"><i></i><i></i><i></i></span>
+      </p>
+    </div>
+    <div id="root"></div>
+    <noscript>
+      <p style="position: fixed; inset: auto 0 12vh; text-align: center; font: 700 15px system-ui; color: #223a2b">
+        EYECORE LABS needs JavaScript enabled to open the vault.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

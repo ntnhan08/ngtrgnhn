@@ -2,14 +2,14 @@
   "app": {
     "name": "EYECORE LABS",
     "version": "1.0.0",
-    "description": ""
+    "description": "Personal Contact Vault"
   },
 
   "profile": {
     "avatar": "",
     "fullName": "Nguyen Trong Nhan",
-    "phone": "0973937991",
-    "email": "ntnhan21008@gmail.com",
+    "phone": "0900000000",
+    "email": "example@gmail.com",
 
     "education": {
       "school": "PTIT",
@@ -18,8 +18,8 @@
     },
 
     "work": {
-      "company": "None",
-      "position": ""
+      "company": "Example Company",
+      "position": "Software Developer"
     },
 
     "relationship": {
@@ -27,8 +27,8 @@
     },
 
     "bank": {
-      "bankName": "TechcomBank",
-      "accountNumber": "8721102008"
+      "bankName": "MB Bank",
+      "accountNumber": "0123456789"
     },
 
     "address": "",
@@ -41,8 +41,8 @@
     "email": true,
     "education": true,
     "major": true,
-    "work": false,
-    "company": false,
+    "work": true,
+    "company": true,
     "position": true,
     "relationship": true,
     "bank": true,
@@ -54,13 +54,13 @@
   },
 
   "social": {
-    "facebook": { "enabled": true, "url": "https://facebook.com/ngtrgnhn" },
-    "instagram": { "enabled": false, "url": "https://instagram.com/example" },
-    "tiktok": { "enabled": true, "url": "https://tiktok.com/@_bbinn_" },
+    "facebook": { "enabled": true, "url": "https://facebook.com/example" },
+    "instagram": { "enabled": true, "url": "https://instagram.com/example" },
+    "tiktok": { "enabled": true, "url": "https://tiktok.com/@example" },
     "youtube": { "enabled": false, "url": "" },
-    "github": { "enabled": true, "url": "https://github.com/eyecorelabs" },
+    "github": { "enabled": true, "url": "https://github.com/example" },
     "linkedin": { "enabled": false, "url": "" },
-    "zalo": { "enabled": false, "url": "" },
+    "zalo": { "enabled": true, "url": "" },
     "x": { "enabled": false, "url": "" },
     "discord": { "enabled": false, "url": "" },
     "telegram": { "enabled": false, "url": "" },

@@ -4,7 +4,7 @@
    EYECORE LABS — "Nature School" comic design system.
    Cartoon outdoors: sky-blue paper, deep pine ink, sun yellow + leaf green.
    Baloo 2 (display, Vietnamese) + Nunito (body) bundled locally.
-   Everything animates on transform/opacity only — 60fps compositing.
+   Everything runs on transform/opacity for 60fps compositing.
 --------------------------------------------------------------------------- */
 @theme inline {
   --color-bg: var(--bg);
@@ -114,10 +114,6 @@ body {
   border: 2.5px solid var(--line-strong);
   border-radius: 8px;
 }
-.no-glass .glass,
-.no-glass .glass-plain {
-  background: rgba(255, 255, 250, 0.97);
-}
 .chip-square {
   display: inline-flex;
   align-items: center;
@@ -161,7 +157,7 @@ body {
 .btn-paper { background: var(--raised); color: var(--ink); }
 .btn-danger { background: var(--raised); color: var(--danger); }
 
-/* shine sweep on the primary CTA */
+/* shine sweep on primary CTA */
 .shine { position: relative; overflow: hidden; }
 .shine::after {
   content: "";
@@ -179,23 +175,22 @@ body {
 .ink-pop {
   text-shadow:
     0 1px 0 rgba(255, 255, 250, 0.95),
-    0 0 18px rgba(255, 255, 250, 0.7),
-    0 0 8px rgba(255, 255, 250, 0.55),
-    0 2px 10px rgba(255, 255, 250, 0.5);
+    0 0 14px rgba(255, 255, 250, 0.75),
+    0 0 26px rgba(255, 255, 250, 0.5),
+    0 2px 10px rgba(255, 255, 250, 0.55);
 }
-/* ambient paper glow behind the whole home profile column — two stacked
-   layers: a near-solid core for the content, a wider soft fringe that
-   melts into the sky. No box, no border — just light. */
+/* near-solid paper glow behind the whole home profile column — two stacked
+   ellipses: an almost-opaque core and a wide soft fringe. No box, no frame. */
 .profile-halo {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: min(820px, 140vw);
+  width: min(860px, 142vw);
   height: 132%;
   transform: translate(-50%, -50%);
   background:
-    radial-gradient(ellipse 46% 44% at 50% 50%, rgba(255, 255, 250, 0.94) 0%, rgba(255, 255, 250, 0.84) 48%, rgba(255, 255, 250, 0) 72%),
-    radial-gradient(ellipse 60% 58% at 50% 50%, rgba(255, 255, 250, 0.5) 0%, rgba(255, 255, 250, 0.22) 55%, rgba(255, 255, 250, 0) 78%);
+    radial-gradient(ellipse 40% 46% at 50% 50%, rgba(255, 255, 250, 0.96) 0%, rgba(255, 255, 250, 0.92) 34%, rgba(255, 255, 250, 0) 62%),
+    radial-gradient(ellipse 50% 56% at 50% 50%, rgba(255, 255, 250, 0.55) 26%, rgba(255, 255, 250, 0.28) 48%, rgba(255, 255, 250, 0) 72%);
   pointer-events: none;
 }
 .pop-chip {
@@ -219,108 +214,13 @@ body {
   -webkit-box-decoration-break: clone;
 }
 
-/* ------------------------------ form controls ----------------------------- */
-.field {
-  width: 100%;
-  background: var(--raised);
-  border: 2.5px solid var(--line-strong);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
-}
-.field::placeholder { color: var(--faint); }
-.field:hover { border-color: var(--inkline); }
-.field:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft), 3px 3px 0 var(--shadow-soft);
-}
-input, select, textarea { font-family: inherit; }
-input[type="date"] { color-scheme: inherit; }
-
-/* --------------------------------- tooltip -------------------------------- */
-.tip { position: relative; }
-.tip::after {
-  content: attr(data-tip);
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 9px);
-  transform: translateX(-50%) translateY(4px);
-  background: var(--raised);
-  border: 2px solid var(--inkline);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 7px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.16s ease, transform 0.16s ease;
-  z-index: 70;
-  box-shadow: 2px 2px 0 var(--shadow-soft);
-}
-.tip:hover::after,
-.tip:focus-within::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ------------------------------ social buttons ---------------------------- */
-.social-btn {
-  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.18s ease,
-    border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-  will-change: transform;
-}
-.social-btn:hover,
-.social-btn:focus-visible {
-  color: var(--brand);
-  border-color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 12%, #fffaf0);
-  transform: scale(1.12) rotate(-3deg);
-  box-shadow: 3px 4px 0 color-mix(in srgb, var(--brand) 30%, transparent);
-}
-.social-btn:active { transform: scale(0.94); }
-} /* end @layer components */
-
-/* ------------------------------ depth layers ------------------------------ */
-/* paper grain over everything — crisp at display resolution, near-free */
-.grain::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.05;
-  background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
-}
-.cursor-glow {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1;
-  width: 340px;
-  height: 340px;
-  margin: -170px 0 0 -170px;
-  border-radius: 9999px;
-  pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 214, 92, 0.2), rgba(255, 214, 92, 0) 62%);
-  will-change: transform;
-}
-
 /* -------------------------------- backdrop ------------------------------- */
-/* The painted scene lives at z-0; app content (main) sits at z-1 and is
-   fully transparent — nothing can ever cover the scene. Overscanned so the
-   pointer parallax never reveals an edge. */
+/* The painted scene lives at z-0; the app content (main) sits one step above
+   at z-1 and is fully transparent, so nothing can ever cover the scene. */
 .app-backdrop {
   position: fixed;
-  inset: -36px;
+  inset: -36px; /* overscanned so parallax never reveals an edge */
   z-index: 0;
-  pointer-events: none;
   background:
     radial-gradient(760px 760px at calc(100% - 96px) 44px, rgba(255, 236, 170, 0.6), transparent 62%),
     linear-gradient(180deg, #dceef9 0%, var(--bg) 42%, var(--bg-deep) 100%);
@@ -363,8 +263,9 @@ input[type="date"] { color-scheme: inherit; }
   50% { transform: translateY(-10px); }
 }
 .bird-wing {
+  transform-box: fill-box;
+  transform-origin: 20% 85%;
   animation: wing-flap 0.5s ease-in-out infinite alternate;
-  transform-origin: 12px 10px;
 }
 .bird-wing.far {
   animation-duration: 0.58s;
@@ -410,10 +311,9 @@ input[type="date"] { color-scheme: inherit; }
 }
 .butterfly-wing {
   transform-box: fill-box;
+  transform-origin: 90% 50%;
   animation: butterfly-flap 0.22s ease-in-out infinite alternate;
 }
-.butterfly-wing.l { transform-origin: right center; }
-.butterfly-wing.r { transform-origin: left center; }
 @keyframes butterfly-flap {
   from { transform: scaleX(1); }
   to { transform: scaleX(0.35); }
@@ -428,7 +328,7 @@ input[type="date"] { color-scheme: inherit; }
 }
 .bee-wing {
   transform-box: fill-box;
-  transform-origin: center bottom;
+  transform-origin: 50% 100%;
   animation: bee-flap 0.12s linear infinite alternate;
 }
 @keyframes bee-flap {
@@ -506,6 +406,99 @@ input[type="date"] { color-scheme: inherit; }
 @keyframes sticker-bob {
   0%, 100% { transform: translateY(0) rotate(-1.2deg); }
   50% { transform: translateY(-9px) rotate(1.4deg); }
+}
+
+/* ------------------------------ form controls ----------------------------- */
+.field {
+  width: 100%;
+  background: var(--raised);
+  border: 2.5px solid var(--line-strong);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
+}
+.field::placeholder { color: var(--faint); }
+.field:hover { border-color: var(--inkline); }
+.field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft), 3px 3px 0 var(--shadow-soft);
+}
+input, select, textarea { font-family: inherit; }
+input[type="date"] { color-scheme: inherit; }
+
+/* --------------------------------- tooltip -------------------------------- */
+.tip { position: relative; }
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 9px);
+  transform: translateX(-50%) translateY(4px);
+  background: var(--raised);
+  border: 2px solid var(--inkline);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 7px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  z-index: 70;
+  box-shadow: 2px 2px 0 var(--shadow-soft);
+}
+.tip:hover::after,
+.tip:focus-within::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ------------------------------ social buttons ---------------------------- */
+.social-btn {
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.18s ease,
+    border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+}
+.social-btn:hover,
+.social-btn:focus-visible {
+  color: var(--brand);
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 12%, #fffaf0);
+  transform: scale(1.12) rotate(-3deg);
+  box-shadow: 3px 4px 0 color-mix(in srgb, var(--brand) 30%, transparent);
+}
+.social-btn:active { transform: scale(0.94); }
+} /* end @layer components */
+
+/* ------------------------------ depth layers ------------------------------ */
+/* paper grain over everything, at display resolution (crisp, near-free) */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+}
+.cursor-glow {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 214, 92, 0.2), rgba(255, 214, 92, 0) 62%);
+  will-change: transform;
 }
 
 /* When the full profile (or the intro) is open, freeze every ambient

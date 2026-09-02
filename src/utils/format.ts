@@ -31,14 +31,12 @@ export function maskEmail(email: string): string {
   return `${email.slice(0, 1)}•••${email.slice(at)}`;
 }
 
-/** Privacy mode: everything except the last four digits. */
 export function maskAccountPrivacy(account: string): string {
   const digits = account.replace(/\D/g, "");
   if (digits.length <= 4) return account.replace(/\d/g, "•");
   return `${"•".repeat(Math.min(8, digits.length - 4))}${digits.slice(-4)}`;
 }
 
-/** Default resting mask on the bank card: •••• •••• 6789 */
 export function maskAccountTail(account: string): string {
   const digits = account.replace(/\D/g, "");
   if (digits.length <= 4) return account.replace(/\d/g, "•");
@@ -90,11 +88,7 @@ export function initialsOf(name: string): string {
 /* ------------------------------ relationships ----------------------------- */
 
 export const RELATIONSHIP_ORDER: RelationshipStatus[] = [
-  "single",
-  "dating",
-  "married",
-  "complicated",
-  "unknown",
+  "single", "dating", "married", "complicated", "unknown",
 ];
 
 export const RELATIONSHIP_META: Record<

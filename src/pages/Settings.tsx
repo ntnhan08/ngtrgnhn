@@ -46,12 +46,20 @@ function SettingCard({ title, children }: { title: string; children: ReactNode }
   return (
     <motion.section variants={settingsItem} className="glass p-5 sm:p-6">
       <h2 className="font-display text-[11px] font-bold uppercase tracking-[0.18em] text-faint">{title}</h2>
-      <div className="mt-3 divide-y divide-line/70">{children}</div>
+      <div className="mt-3 divide-y-2 divide-line/70">{children}</div>
     </motion.section>
   );
 }
 
-function Row({ title, desc, control }: { title: string; desc?: string; control: ReactNode }) {
+function Row({
+  title,
+  desc,
+  control,
+}: {
+  title: string;
+  desc?: string;
+  control: ReactNode;
+}) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 py-3.5 first:pt-1 last:pb-0">
       <div className="min-w-0">
@@ -96,8 +104,12 @@ export function SettingsPage() {
   }, [contacts.length]);
 
   const themeOptions = [
-    ...(config.features.darkMode ? [{ value: "dark" as const, label: "Dark", icon: <Moon size={13} /> }] : []),
-    ...(config.features.lightMode ? [{ value: "light" as const, label: "Light", icon: <Sun size={13} /> }] : []),
+    ...(config.features.darkMode
+      ? [{ value: "dark" as const, label: "Dark", icon: <Moon size={13} /> }]
+      : []),
+    ...(config.features.lightMode
+      ? [{ value: "light" as const, label: "Light", icon: <Sun size={13} /> }]
+      : []),
     { value: "system" as const, label: "System", icon: <Monitor size={13} /> },
   ];
   const safeTheme = themeOptions.some((o) => o.value === settings.theme) ? settings.theme : "system";
@@ -106,10 +118,7 @@ export function SettingsPage() {
     setBusy("export");
     try {
       const blob = await buildBackupZip(config.app.name, config.app.version);
-      downloadBlob(
-        blob,
-        `${config.app.name.toLowerCase().replace(/\s+/g, "-")}-backup-${new Date().toISOString().slice(0, 10)}.zip`
-      );
+      downloadBlob(blob, `${config.app.name.toLowerCase().replace(/\s+/g, "-")}-backup-${new Date().toISOString().slice(0, 10)}.zip`);
       toast("success", "Backup exported as ZIP");
     } catch {
       toast("error", "Unable to export backup.");
@@ -177,7 +186,7 @@ export function SettingsPage() {
       <SettingCard title="Appearance">
         <Row
           title="Theme"
-          desc="The nature-school sky in light or dark; system follows your OS."
+          desc="Dark and light are both hand-tuned; system follows your OS."
           control={
             <Segmented label="Theme" className="w-56" value={safeTheme} onChange={setTheme} options={themeOptions} />
           }
@@ -230,7 +239,7 @@ export function SettingsPage() {
           }
           control={
             <div className="flex items-center gap-2.5">
-              <EyeOff size={16} className={settings.privacy ? "text-accent-hi" : "text-faint"} />
+              <EyeOff size={16} className={settings.privacy ? "text-accent" : "text-faint"} />
               <Toggle
                 checked={settings.privacy}
                 onChange={setPrivacy}
@@ -309,12 +318,12 @@ export function SettingsPage() {
       <SettingCard title="Storage">
         <div className="grid grid-cols-3 gap-3 py-3.5">
           {[
-            { icon: <Database size={15} />, num: null as number | null, value: formatBytes(usage), label: "Used" },
-            { icon: <Users size={15} />, num: contacts.length, value: "", label: "Contacts" },
-            { icon: <ImageIcon size={15} />, num: imageCount, value: "", label: "Photos" },
+            { icon: <Database size={15} />, value: formatBytes(usage), num: null, label: "Used" },
+            { icon: <Users size={15} />, value: "", num: contacts.length, label: "Contacts" },
+            { icon: <ImageIcon size={15} />, value: "", num: imageCount, label: "Photos" },
           ].map((cell) => (
             <div key={cell.label} className="glass-plain flex flex-col items-center gap-1 px-2 py-4 text-center">
-              <span className="text-accent-hi">{cell.icon}</span>
+              <span className="text-accent">{cell.icon}</span>
               <p className="font-display text-lg font-bold tabular-nums text-ink">
                 {cell.num === null ? cell.value : <CountUp value={cell.num} />}
               </p>
@@ -342,7 +351,7 @@ export function SettingsPage() {
         <div className="py-3.5 last:pb-0">
           <p className="text-xs font-bold leading-relaxed text-muted">
             The owner profile, visibility rules, social links and feature switches come from{" "}
-            <code className="rounded-[5px] border border-line bg-raised px-1.5 py-0.5 font-mono text-[11px] text-accent-hi">
+            <code className="rounded-md bg-raised px-1.5 py-0.5 font-mono text-[11px] text-accent-hi">
               config/config.json
             </code>
             . Edit that file and reload — no code changes needed. Contacts you add or edit in the

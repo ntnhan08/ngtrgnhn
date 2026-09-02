@@ -1,8 +1,6 @@
 /* ---------------------------------------------------------------------------
  * App bootstrap store.
  *
- * Startup order (offline-first architecture):
- *
  *   config.json  →  load default configuration (validated + merged)
  *        ↓
  *   IndexedDB    →  load settings & contacts

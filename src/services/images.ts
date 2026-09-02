@@ -92,5 +92,7 @@ export async function countImages(): Promise<number> {
 /** Deletes image blobs no longer referenced by any contact. */
 export async function pruneOrphanedImages(keepIds: Set<string>): Promise<void> {
   const all = await db.images.toArray();
-  await Promise.all(all.filter((rec) => !keepIds.has(rec.id)).map((rec) => removeImage(rec.id)));
+  await Promise.all(
+    all.filter((rec) => !keepIds.has(rec.id)).map((rec) => removeImage(rec.id))
+  );
 }

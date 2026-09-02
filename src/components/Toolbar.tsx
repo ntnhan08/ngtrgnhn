@@ -10,7 +10,7 @@ import {
   GraduationCap,
   Landmark,
   LayoutGrid,
-  List,
+  List as ListIcon,
   RotateCcw,
   Search,
   Share2,
@@ -34,7 +34,7 @@ export function SearchBar({
   inputRef?: Ref<HTMLInputElement>;
 }) {
   return (
-    <div className="relative min-w-0 flex-1">
+    <div className="relative min-w-0 flex-1 basis-52">
       <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-faint" />
       <input
         ref={inputRef}
@@ -137,7 +137,7 @@ export function FilterPanel({
         >
           <div className="glass-plain mt-3 p-4">
             <div className="flex items-center justify-between gap-3">
-              <p className="font-display text-[11px] font-bold uppercase tracking-[0.16em] text-faint">
+              <p className="font-display text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
                 Relationship
               </p>
               {active > 0 && (
@@ -164,7 +164,7 @@ export function FilterPanel({
               ))}
             </div>
 
-            <p className="font-display mt-4 text-[11px] font-bold uppercase tracking-[0.16em] text-faint">Has</p>
+            <p className="font-display mt-4 text-[11px] font-bold uppercase tracking-[0.14em] text-faint">Has</p>
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               <FilterChip active={filters.hasEducation} onClick={() => onChange({ ...filters, hasEducation: !filters.hasEducation })}>
                 <GraduationCap size={12} /> Education
@@ -221,7 +221,7 @@ export function SortMenu({ value, onChange }: { value: SortKey; onChange: (key: 
         aria-label="Sort contacts"
         className="field flex w-auto items-center gap-2 whitespace-nowrap py-[9px] text-[13px] font-bold"
       >
-        <ArrowUpDown size={14} className="text-accent-hi" />
+        <ArrowUpDown size={14} className="text-accent" />
         <span className="hidden sm:inline">{current?.label}</span>
         <ChevronDown size={14} className={cn("text-faint transition-transform duration-200", open && "rotate-180")} />
       </motion.button>
@@ -236,7 +236,7 @@ export function SortMenu({ value, onChange }: { value: SortKey; onChange: (key: 
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.16, ease: "easeOut" }}
             className="glass absolute right-0 top-full z-50 mt-2 w-56 p-1.5"
-            style={{ boxShadow: "var(--shadow-pop, 0 26px 70px rgba(40,58,42,0.24))" }}
+            style={{ boxShadow: "var(--shadow-pop, 0 24px 60px rgba(34,58,43,0.25))" }}
           >
             {SORT_OPTIONS.map((opt) => (
               <button
@@ -266,7 +266,13 @@ export function SortMenu({ value, onChange }: { value: SortKey; onChange: (key: 
 
 /* ------------------------------ layout toggle ------------------------------ */
 
-export function LayoutToggle({ value, onChange }: { value: LayoutMode; onChange: (layout: LayoutMode) => void }) {
+export function LayoutToggle({
+  value,
+  onChange,
+}: {
+  value: LayoutMode;
+  onChange: (layout: LayoutMode) => void;
+}) {
   return (
     <Segmented
       label="Layout"
@@ -275,7 +281,7 @@ export function LayoutToggle({ value, onChange }: { value: LayoutMode; onChange:
       onChange={onChange}
       options={[
         { value: "grid", label: "", icon: <LayoutGrid size={14} /> },
-        { value: "list", label: "", icon: <List size={14} /> },
+        { value: "list", label: "", icon: <ListIcon size={14} /> },
       ]}
     />
   );
@@ -302,13 +308,13 @@ export function FilterButton({
         (open || activeCount > 0) && "border-accent text-accent-hi"
       )}
     >
-      <SlidersHorizontal size={14} className={open || activeCount > 0 ? "text-accent-hi" : "text-faint"} />
+      <SlidersHorizontal size={14} className={open || activeCount > 0 ? "text-accent" : "text-faint"} />
       <span className="hidden md:inline">Filters</span>
       {activeCount > 0 && (
         <motion.span
           initial={{ scale: 0.5 }}
           animate={{ scale: 1 }}
-          className="inline-flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-black text-onaccent"
+          className="inline-flex h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-inkline bg-sun px-1 text-[10px] font-black text-ink"
         >
           {activeCount}
         </motion.span>

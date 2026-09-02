@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="vi" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -18,18 +18,18 @@
     <meta name="apple-mobile-web-app-title" content="EYECORE LABS" />
     <script>
       /* The whole intro is pure CSS and starts the instant this file is
-         parsed — before any JavaScript executes. React only dissolves the
-         overlay out at the exact end of the sequence; it never interrupts.
+         parsed. React records when the sequence began so it can hand off at
+         exactly the right moment — the dissolve never cuts the intro short.
 
-         Timeline (mirrored by the constants in src/App.tsx):
-           0.25s  the eye fades in — big, dead-centre of the sun circle
+         Sequence (mirrors the constants in src/App.tsx):
+           0.25s  the eye fades in, dead-centre of the sun circle
            0.60s  it blinks 3 times (0.45s each) → done at 1.95s
            2.05s  it flips (rotateY) and settles into the "O" slot → 2.75s
            2.85s  letters pop one by one: E Y E C [eye] R E · L A B S
                   (the O is skipped — the eye already lives there)
            4.35s  the underline sweeps across (0.6s) → done at 4.95s
-           +2.00s the exact requested hold → hand-off at 6.95s
-           +0.55s dissolve → the app beneath is fully visible            */
+           +2.00s the exact requested hold  → hand-off at 6.95s
+           +0.55s dissolve                  → app fully visible ≈7.5s       */
       window.__pvIntroStart = Date.now();
     </script>
     <style>
@@ -126,15 +126,16 @@
         -webkit-text-stroke: 2.5px var(--si-ink);
         text-shadow: 0.075em 0.085em 0 rgba(34, 58, 43, 0.16);
       }
+      /* the space between the two words */
       .si-gap {
         width: 0.34em;
       }
 
       /* ------------------------------ the eye ------------------------------ */
-      /* The eye is born inside the "O" slot. It appears at the centre of the
-         sun circle (≈0.85em right of the slot) at a big, comfortable size,
-         blinks, then flips and settles into the O — its "home" is exactly
-         where the O belongs, so no measuring is ever needed. */
+      /* The eye is born inside the "O" slot. It appears dead-centre of the
+         sun circle (screen centre, offset right by the O's displacement),
+         big, blinks three times, then flips (rotateY) and settles into the
+         O — its "home" is exactly where the O belongs. */
       .si-oslot {
         position: relative;
         display: inline-flex;
@@ -163,7 +164,8 @@
       }
       @keyframes si-eye-fly {
         from {
-          /* dead-centre of the sun circle, big, facing away to start */
+          /* dead-centre of the sun circle (the O slot sits ~1 glyph left of
+             screen centre, so we offset right), big, facing away to start */
           transform: translate(0.85em, 0) scale(2.2) rotateY(180deg);
         }
         to {
@@ -278,13 +280,16 @@
       @media (prefers-reduced-motion: reduce) {
         .si-rays,
         .si-dots i,
-        .si-eye-pos,
         .si-eye-blink {
           animation: none;
         }
         .si-l {
           animation: none;
           opacity: 1;
+        }
+        .si-eye-pos {
+          animation: none;
+          transform: none;
         }
         .si-c1,
         .si-c2 {
@@ -299,7 +304,8 @@
     </style>
   </head>
   <body>
-    <!-- Pre-JS intro: lives OUTSIDE #root so React can never interrupt it. -->
+    <!-- Pre-JS intro: painted by the browser instantly, dissolved by React.
+         It lives OUTSIDE #root so React mounting never interrupts it. -->
     <div id="static-intro" aria-label="EYECORE LABS">
       <svg class="si-rays" viewBox="0 0 200 200" aria-hidden="true">
         <g>
@@ -321,10 +327,9 @@
         <p class="si-name">
           <span class="si-l si-ink" style="--d: 0">E</span><span class="si-l si-ink" style="--d: 1">Y</span><span class="si-l si-ink" style="--d: 2">E</span><span class="si-l si-ink" style="--d: 3">C</span><span
             class="si-oslot"
-          >
-            <span class="si-eye-pos">
-              <span class="si-eye-blink">
-                <svg class="si-eye-svg" viewBox="0 0 100 100" aria-hidden="true">
+            ><span class="si-eye-pos"
+              ><span class="si-eye-blink"
+                ><svg class="si-eye-svg" viewBox="0 0 100 100" aria-hidden="true">
                   <g stroke="#223a2b" stroke-width="5" stroke-linecap="round" fill="none">
                     <path d="M24 16 L30 25" />
                     <path d="M50 9 L50 20" />
@@ -334,11 +339,9 @@
                   <circle cx="50" cy="60" r="19" fill="#3d9b5f" stroke="#223a2b" stroke-width="4" />
                   <circle cx="50" cy="60" r="8.5" fill="#223a2b" />
                   <circle cx="56.5" cy="53.5" r="4.5" fill="#ffffff" />
-                </svg>
-              </span>
-            </span>
-          </span>
-          <span class="si-l si-ink" style="--d: 4">R</span><span class="si-l si-ink" style="--d: 5">E</span><span class="si-gap"></span><span class="si-l si-labs" style="--d: 6">L</span><span class="si-l si-labs" style="--d: 7">A</span><span class="si-l si-labs" style="--d: 8">B</span><span class="si-l si-labs" style="--d: 9">S</span>
+                </svg></span
+            ></span></span
+          ><span class="si-l si-ink" style="--d: 4">R</span><span class="si-l si-ink" style="--d: 5">E</span><span class="si-gap"></span><span class="si-l si-labs" style="--d: 6">L</span><span class="si-l si-labs" style="--d: 7">A</span><span class="si-l si-labs" style="--d: 8">B</span><span class="si-l si-labs" style="--d: 9">S</span>
         </p>
         <svg class="si-curve" viewBox="0 0 420 44" preserveAspectRatio="none" aria-hidden="true">
           <path class="si-c1" pathLength="1" d="M8 30 C 84 6, 152 42, 218 24 C 284 6, 344 36, 412 12" />

@@ -1,6 +1,6 @@
-/* Full profile overlay — opens over a strong blur of a FROZEN scene so all
- * attention lands on the person and scrolling stays at a steady 60fps.
- * Comic panels with corner tags; only visibility-enabled fields render. */
+/* Full profile overlay — opens over a strong blur + frozen scene so all
+ * attention lands on the person. Comic panels with corner tags. Only
+ * visibility-enabled fields render; scrolling stays at 60fps. */
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
@@ -65,7 +65,6 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   );
 }
 
-/** Comic panel with a corner tag label. Reveals on scroll. */
 function Panel({
   title,
   icon,
@@ -221,7 +220,7 @@ function ProfilePage({ id }: { id: string }) {
       aria-modal="true"
       aria-label={`Profile of ${contact.fullName}`}
     >
-      {/* everything behind melts into a blur of one frozen frame */}
+      {/* everything behind melts into a blur */}
       <div
         className="absolute inset-0 bg-overlay"
         style={{
@@ -236,8 +235,6 @@ function ProfilePage({ id }: { id: string }) {
       <motion.div
         ref={scrollRef}
         className="absolute inset-0 overflow-y-auto overscroll-contain"
-        /* translate-only (no scale) so the full-screen layer is composited,
-           never re-rasterized, during the slide — stays at 60fps */
         style={{ transform: "translateZ(0)", backfaceVisibility: "hidden", willChange: "opacity, transform" }}
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}

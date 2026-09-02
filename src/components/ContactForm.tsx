@@ -1,23 +1,19 @@
-/* Add/edit contact modal — every field the vault knows about, avatar
- * processing (WebP ≤512px), per-network social editor, validation and a
- * hand-drawn "Saved ✓" check morph plus confetti when a contact is added.
- * All writes go straight to IndexedDB; nothing touches the network. */
-import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type ReactNode } from "react";
+/* Add / edit contact modal — every change lands in IndexedDB immediately.
+ * Avatar uploads are downscaled to WebP ≤512px before storage. Saving shows
+ * an animated checkmark, then a leaf confetti burst on new contacts. */
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Camera, Check, Loader2, Save, Trash2, X } from "lucide-react";
-import { Modal, Toggle } from "./ui/Primitives";
-import { BrandIcon } from "./icons/BrandIcons";
+import { Camera, Loader2, Save, Trash2, Upload, X } from "lucide-react";
+import { Avatar } from "./Avatar";
+import { Toggle } from "./ui/Primitives";
+import { Modal } from "./ui/Primitives";
+import { BRAND_ICONS } from "./icons/BrandIcons";
 import { useAppStore } from "../store/appStore";
 import { useContactsStore, type NewContact } from "../store/contactsStore";
 import { useUiStore } from "../store/uiStore";
-import { processImageFile, removeImage, resolveAvatarUrl, storeImage } from "../services/images";
-import { cn, RELATIONSHIP_META, RELATIONSHIP_ORDER, VN_BANKS } from "../utils/format";
-import type { RelationshipStatus, SocialLink, SocialNetworkId } from "../types";
-
-const SOCIAL_IDS: SocialNetworkId[] = [
-  "facebook", "instagram", "tiktok", "youtube", "github", "linkedin",
-  "zalo", "x", "discord", "telegram", "threads", "snapchat",
-];
+import { processImageFile, storeImage, removeImage } from "../services/images";
+import { RELATIONSHIP_META, RELATIONSHIP_ORDER, VN_BANKS } from "../utils/format";
+import type { ContactRecord, RelationshipStatus, SocialNetworkId, SocialLink } from "../types";
 
 interface FormState {
   fullName: string;
@@ -55,22 +51,51 @@ const EMPTY_FORM: FormState = {
   social: {},
 };
 
+function fromContact(c: ContactRecord): FormState {
+  return {
+    fullName: c.fullName,
+    phone: c.phone,
+    email: c.email,
+    school: c.education.school,
+    major: c.education.major,
+    year: c.education.year,
+    company: c.work.company,
+    position: c.work.position,
+    relationship: c.relationship,
+    bankName: c.bank.bankName,
+    accountNumber: c.bank.accountNumber,
+    birthday: c.birthday,
+    address: c.address,
+    notes: c.notes,
+    social: { ...c.social },
+  };
+}
+
 function Field({
   label,
   children,
-  className,
+  error,
 }: {
   label: string;
   children: ReactNode;
-  className?: string;
+  error?: boolean;
 }) {
   return (
-    <label className={cn("block", className)}>
-      <span className="font-display mb-1.5 block text-[10.5px] font-bold uppercase tracking-[0.16em] text-faint">
+    <label className="block">
+      <span className={`font-display mb-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] ${error ? "text-danger" : "text-faint"}`}>
         {label}
       </span>
       {children}
     </label>
+  );
+}
+
+function SectionTitle({ children }: { children: ReactNode }) {
+  return (
+    <p className="font-display mt-6 mb-3 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.18em] text-accent-hi first:mt-0">
+      <span className="h-[3px] w-5 rounded-full bg-accent" aria-hidden="true" />
+      {children}
+    </p>
   );
 }
 
@@ -83,13 +108,12 @@ export function ContactForm() {
   const contacts = useContactsStore((s) => s.contacts);
   const add = useContactsStore((s) => s.add);
   const update = useContactsStore((s) => s.update);
-  const config = useAppStore((s) => s.config)!;
 
   const editing = editingId ? contacts.find((c) => c.id === editingId) ?? null : null;
 
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [avatarFile, setAvatarFile] = useState<{ blob: Blob; mime: string; ext: string } | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarRemoved, setAvatarRemoved] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -97,43 +121,12 @@ export function ContactForm() {
   const fileRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<number | undefined>(undefined);
 
-  const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
-    setForm((f) => ({ ...f, [key]: value }));
-
-  /* hydrate whenever the modal opens */
   useEffect(() => {
     if (!open) return;
-    if (editing) {
-      setForm({
-        fullName: editing.fullName,
-        phone: editing.phone,
-        email: editing.email,
-        school: editing.education.school,
-        major: editing.education.major,
-        year: editing.education.year,
-        company: editing.work.company,
-        position: editing.work.position,
-        relationship: editing.relationship,
-        bankName: editing.bank.bankName,
-        accountNumber: editing.bank.accountNumber,
-        birthday: editing.birthday,
-        address: editing.address,
-        notes: editing.notes,
-        social: { ...editing.social },
-      });
-      setAvatarFile(null);
-      setAvatarRemoved(false);
-      if (editing.avatarId) {
-        void resolveAvatarUrl(editing.avatarId).then(setAvatarUrl);
-      } else {
-        setAvatarUrl(null);
-      }
-    } else {
-      setForm(EMPTY_FORM);
-      setAvatarFile(null);
-      setAvatarUrl(null);
-      setAvatarRemoved(false);
-    }
+    setForm(editing ? fromContact(editing) : EMPTY_FORM);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setAvatarRemoved(false);
     setNameError(false);
     setSaving(false);
     setSaved(false);
@@ -147,37 +140,52 @@ export function ContactForm() {
     try {
       const processed = await processImageFile(file);
       setAvatarFile(processed);
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+      setAvatarPreview(URL.createObjectURL(processed.blob));
       setAvatarRemoved(false);
-      setAvatarUrl(URL.createObjectURL(processed.blob));
     } catch (err) {
       toast("error", err instanceof Error ? err.message : "Image format not supported.");
+    } finally {
+      if (fileRef.current) fileRef.current.value = "";
     }
   };
 
-  const save = async (e: ReactMouseEvent) => {
+  const removeAvatar = () => {
+    setAvatarFile(null);
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    setAvatarPreview(null);
+    setAvatarRemoved(true);
+  };
+
+  const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm((f) => ({ ...f, [key]: value }));
+    if (key === "fullName") setNameError(false);
+  };
+
+  const setSocial = (id: SocialNetworkId, patch: Partial<SocialLink>) =>
+    setForm((f) => ({
+      ...f,
+      social: { ...f.social, [id]: { enabled: false, url: "", ...f.social[id], ...patch } },
+    }));
+
+  const save = async (e: React.MouseEvent) => {
     const name = form.fullName.trim();
     if (!name) {
       setNameError(true);
+      toast("error", "A name is required to file this card.");
       return;
     }
     const burstX = e.clientX;
     const burstY = e.clientY;
     setSaving(true);
     try {
-      /* avatar: keep → reuse id, replace → store new blob, remove → null */
       let avatarId = editing?.avatarId ?? null;
-      if (avatarFile) {
-        if (avatarId) await removeImage(avatarId).catch(() => undefined);
-        avatarId = await storeImage(avatarFile.blob, avatarFile.mime, avatarFile.ext);
-      } else if (avatarRemoved && avatarId) {
-        await removeImage(avatarId).catch(() => undefined);
+      if (avatarRemoved && avatarId) {
+        await removeImage(avatarId);
         avatarId = null;
       }
-
-      const social: FormState["social"] = {};
-      for (const id of SOCIAL_IDS) {
-        const s = form.social[id];
-        if (s && (s.enabled || s.url.trim())) social[id] = { enabled: s.enabled, url: s.url.trim() };
+      if (avatarFile) {
+        avatarId = await storeImage(avatarFile.blob, avatarFile.mime, avatarFile.ext);
       }
 
       const  NewContact = {
@@ -192,7 +200,7 @@ export function ContactForm() {
         birthday: form.birthday,
         address: form.address.trim(),
         notes: form.notes.trim(),
-        social,
+        social: form.social,
       };
 
       if (editing) {
@@ -215,65 +223,60 @@ export function ContactForm() {
     }
   };
 
-  const socialRow = (id: SocialNetworkId) => {
-    const link = form.social[id] ?? { enabled: false, url: "" };
-    return (
-      <div key={id} className="flex items-center gap-2.5 rounded-[7px] border-2 border-line bg-raised/70 px-3 py-2">
-        <span className="text-muted" style={{ color: link.enabled ? undefined : undefined }}>
-          <BrandIcon id={id} size={16} />
-        </span>
-        <span className="font-display w-20 shrink-0 text-xs font-bold capitalize text-ink">{id === "x" ? "X" : id}</span>
-        <input
-          type="url"
-          value={link.url}
-          onChange={(e) => set("social", { ...form.social, [id]: { ...link, url: e.target.value } })}
-          placeholder="https://…"
-          aria-label={`${id} URL`}
-          className="field min-w-0 flex-1 px-3 py-1.5 text-xs"
-        />
-        <Toggle
-          checked={link.enabled}
-          onChange={(v) => set("social", { ...form.social, [id]: { ...link, enabled: v } })}
-          label={`Enable ${id}`}
-        />
-      </div>
-    );
-  };
+  const displayName = form.fullName.trim() || "New contact";
 
   return (
     <Modal open={open} onClose={closeForm} maxWidth="max-w-2xl">
       <div className="flex items-center justify-between border-b-2 border-line px-5 py-4 sm:px-6">
-        <h2 className="font-display text-lg font-bold text-ink">
-          {editing ? `Edit ${editing.fullName}` : "New contact"}
+        <h2 className="font-display text-xl font-bold text-ink">
+          {editing ? "Edit contact" : "New contact"}
         </h2>
-        <button
+        <motion.button
           type="button"
+          whileTap={{ scale: 0.88 }}
           onClick={closeForm}
-          aria-label="Close"
-          className="rounded-[7px] border-2 border-line bg-raised p-1.5 text-muted transition-colors hover:border-inkline hover:text-ink"
+          aria-label="Close form"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-[8px] border-2 border-inkline bg-raised text-muted transition-colors hover:text-danger"
+          style={{ boxShadow: "2px 2px 0 var(--shadow-soft)" }}
         >
-          <X size={16} />
-        </button>
+          <X size={17} />
+        </motion.button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+      <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">
         {/* avatar picker */}
         <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            aria-label="Choose avatar photo"
-            className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[12px] border-[3px] border-inkline bg-raised shadow-[3px_4px_0_var(--shadow-soft)] transition-transform hover:-translate-y-0.5"
-          >
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="" className="h-full w-full object-cover" />
-            ) : (
-              <span className="flex h-full w-full flex-col items-center justify-center gap-1 text-faint">
-                <Camera size={20} />
-                <span className="font-display text-[9px] font-bold uppercase tracking-wider">Photo</span>
-              </span>
+          <div className="relative">
+            <Avatar
+              name={displayName}
+              avatarId={avatarRemoved ? null : editing?.avatarId}
+              avatarPath={avatarPreview ?? undefined}
+              size={76}
+            />
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.85 }}
+              onClick={() => fileRef.current?.click()}
+              aria-label="Upload photo"
+              className="absolute -bottom-1.5 -right-1.5 inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-inkline bg-sun text-ink"
+              style={{ boxShadow: "2px 2px 0 var(--shadow-soft)" }}
+            >
+              <Camera size={14} />
+            </motion.button>
+          </div>
+          <div className="flex flex-col gap-2">
+            <button type="button" onClick={() => fileRef.current?.click()} className="btn-comic btn-paper px-4 py-1.5 text-xs">
+              <Upload size={13} />
+              {avatarPreview || (!avatarRemoved && editing?.avatarId) ? "Change photo" : "Upload photo"}
+            </button>
+            {(avatarPreview || (!avatarRemoved && editing?.avatarId)) && (
+              <button type="button" onClick={removeAvatar} className="btn-comic btn-danger px-4 py-1.5 text-xs">
+                <Trash2 size={13} />
+                Remove
+              </button>
             )}
-          </button>
+            <p className="text-[11px] font-bold text-faint">JPG · PNG · WEBP · AVIF — stored on-device</p>
+          </div>
           <input
             ref={fileRef}
             type="file"
@@ -281,68 +284,29 @@ export function ContactForm() {
             className="hidden"
             onChange={(e) => onPickAvatar(e.target.files?.[0])}
           />
-          <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-extrabold text-ink">Avatar</p>
-            <p className="text-xs font-bold text-muted">JPG, PNG, WEBP or AVIF — auto-compressed to 512px WebP.</p>
-            {avatarUrl && (
-              <button
-                type="button"
-                onClick={() => {
-                  setAvatarRemoved(true);
-                  setAvatarFile(null);
-                  setAvatarUrl(null);
-                }}
-                className="mt-1.5 inline-flex items-center gap-1 text-xs font-bold text-danger hover:underline"
-              >
-                <Trash2 size={12} />
-                Remove photo
-              </button>
-            )}
-          </div>
         </div>
 
-        {/* identity + contact */}
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Full name *" className="sm:col-span-2">
-            <motion.div animate={nameError ? { x: [0, -7, 7, -4, 4, 0] } : { x: 0 }} transition={{ duration: 0.4 }}>
+        <SectionTitle>Identity</SectionTitle>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Field label="Full name" error={nameError}>
               <input
-                className={cn("field", nameError && "border-danger")}
+                className={`field ${nameError ? "border-danger" : ""}`}
                 value={form.fullName}
-                onChange={(e) => {
-                  set("fullName", e.target.value);
-                  if (nameError) setNameError(false);
-                }}
+                onChange={(e) => set("fullName", e.target.value)}
                 placeholder="e.g. Trần Minh Khôi"
                 autoFocus
               />
-            </motion.div>
-            {nameError && <p className="mt-1 text-xs font-bold text-danger">A name is required.</p>}
-          </Field>
+            </Field>
+          </div>
           <Field label="Phone">
-            <input className="field" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="0900 000 000" />
+            <input className="field" value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="0900 000 000" inputMode="tel" />
           </Field>
           <Field label="Email">
-            <input className="field" type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="name@example.com" />
-          </Field>
-        </div>
-
-        {/* education + work */}
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="School">
-            <input className="field" value={form.school} onChange={(e) => set("school", e.target.value)} placeholder="PTIT" />
-          </Field>
-          <Field label="Major">
-            <input className="field" value={form.major} onChange={(e) => set("major", e.target.value)} placeholder="Information Technology" />
-          </Field>
-          <Field label="Years">
-            <input className="field" value={form.year} onChange={(e) => set("year", e.target.value)} placeholder="2022 - 2026" />
+            <input className="field" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="name@example.com" inputMode="email" />
           </Field>
           <Field label="Relationship">
-            <select
-              className="field"
-              value={form.relationship}
-              onChange={(e) => set("relationship", e.target.value as RelationshipStatus)}
-            >
+            <select className="field" value={form.relationship} onChange={(e) => set("relationship", e.target.value as RelationshipStatus)}>
               {RELATIONSHIP_ORDER.map((r) => (
                 <option key={r} value={r}>
                   {RELATIONSHIP_META[r].dot} {RELATIONSHIP_META[r].label}
@@ -350,18 +314,34 @@ export function ContactForm() {
               ))}
             </select>
           </Field>
-          <Field label="Company">
-            <input className="field" value={form.company} onChange={(e) => set("company", e.target.value)} placeholder="FPT Software" />
-          </Field>
-          <Field label="Position">
-            <input className="field" value={form.position} onChange={(e) => set("position", e.target.value)} placeholder="Frontend Developer" />
+          <Field label="Birthday">
+            <input className="field" type="date" value={form.birthday} onChange={(e) => set("birthday", e.target.value)} />
           </Field>
         </div>
 
-        {/* bank */}
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <SectionTitle>Education & work</SectionTitle>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="School">
+            <input className="field" value={form.school} onChange={(e) => set("school", e.target.value)} placeholder="e.g. PTIT" />
+          </Field>
+          <Field label="Major">
+            <input className="field" value={form.major} onChange={(e) => set("major", e.target.value)} placeholder="e.g. Information Technology" />
+          </Field>
+          <Field label="Years">
+            <input className="field" value={form.year} onChange={(e) => set("year", e.target.value)} placeholder="2022 - 2026" />
+          </Field>
+          <Field label="Company">
+            <input className="field" value={form.company} onChange={(e) => set("company", e.target.value)} placeholder="e.g. FPT Software" />
+          </Field>
+          <Field label="Position">
+            <input className="field" value={form.position} onChange={(e) => set("position", e.target.value)} placeholder="e.g. Frontend Developer" />
+          </Field>
+        </div>
+
+        <SectionTitle>Bank</SectionTitle>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="Bank">
-            <input className="field" list="vn-banks" value={form.bankName} onChange={(e) => set("bankName", e.target.value)} placeholder="MB Bank" />
+            <input className="field" list="vn-banks" value={form.bankName} onChange={(e) => set("bankName", e.target.value)} placeholder="e.g. MB Bank" />
             <datalist id="vn-banks">
               {VN_BANKS.map((b) => (
                 <option key={b} value={b} />
@@ -369,32 +349,42 @@ export function ContactForm() {
             </datalist>
           </Field>
           <Field label="Account number">
-            <input className="field" value={form.accountNumber} onChange={(e) => set("accountNumber", e.target.value)} placeholder="0123 456 789" />
-          </Field>
-          <Field label="Birthday">
-            <input className="field" type="date" value={form.birthday} onChange={(e) => set("birthday", e.target.value)} />
-          </Field>
-          <Field label="Address">
-            <input className="field" value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="Cầu Giấy, Hà Nội" />
-          </Field>
-          <Field label="Notes" className="sm:col-span-2">
-            <textarea
-              className="field min-h-20 resize-y"
-              value={form.notes}
-              onChange={(e) => set("notes", e.target.value)}
-              placeholder="Anything worth remembering…"
-            />
+            <input className="field" value={form.accountNumber} onChange={(e) => set("accountNumber", e.target.value)} placeholder="0123 456 789" inputMode="numeric" />
           </Field>
         </div>
 
-        {/* social networks */}
-        <p className="font-display mt-5 text-[10.5px] font-bold uppercase tracking-[0.16em] text-faint">
-          Social networks
-        </p>
-        <div className="mt-2 flex flex-col gap-2">{SOCIAL_IDS.map(socialRow)}</div>
-        <p className="mt-2 text-[11px] font-bold text-faint">
-          Icons only — URLs are never displayed, anywhere in the app. {config.app.name} keeps them private.
-        </p>
+        <SectionTitle>Social networks</SectionTitle>
+        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          {(Object.keys(BRAND_ICONS) as SocialNetworkId[]).map((id) => {
+            const def = BRAND_ICONS[id];
+            const link = form.social[id];
+            return (
+              <div key={id} className="rounded-[7px] border-2 border-line bg-raised/70 px-3 py-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-display text-[13px] font-bold text-ink">{def.label}</span>
+                  <Toggle checked={link?.enabled ?? false} onChange={(v) => setSocial(id, { enabled: v })} label={`Toggle ${def.label}`} />
+                </div>
+                <input
+                  className="field mt-2"
+                  value={link?.url ?? ""}
+                  onChange={(e) => setSocial(id, { url: e.target.value, enabled: link?.enabled ?? (e.target.value.trim() ? true : false) })}
+                  placeholder={`https://…`}
+                  disabled={!(link?.enabled ?? false)}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        <SectionTitle>More</SectionTitle>
+        <div className="flex flex-col gap-4">
+          <Field label="Address">
+            <input className="field" value={form.address} onChange={(e) => set("address", e.target.value)} placeholder="Cầu Giấy, Hà Nội" />
+          </Field>
+          <Field label="Notes">
+            <textarea className="field min-h-[88px] resize-y" value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Anything worth remembering…" />
+          </Field>
+        </div>
       </div>
 
       <div className="flex items-center justify-end gap-3 border-t-2 border-line px-5 py-4 sm:px-6">

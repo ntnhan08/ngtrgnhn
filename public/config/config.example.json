@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "EYECORE LABS",
+    "version": "1.0.0",
+    "description": "Personal Contact Vault"
+  },
+
+  "profile": {
+    "avatar": "",
+    "fullName": "Your Name",
+    "phone": "0900000000",
+    "email": "you@example.com",
+    "education": {
+      "school": "Your School",
+      "major": "Your Major",
+      "year": "2026 - Present"
+    },
+    "work": {
+      "company": "Your Company",
+      "position": "Your Position"
+    },
+    "relationship": {
+      "status": "single"
+    },
+    "bank": {
+      "bankName": "MB Bank",
+      "accountNumber": "0123456789"
+    },
+    "address": "",
+    "birthday": "",
+    "notes": ""
+  },
+
+  "visibility": {
+    "phone": true,
+    "email": true,
+    "education": true,
+    "major": true,
+    "work": true,
+    "company": true,
+    "position": true,
+    "relationship": true,
+    "bank": true,
+    "bankName": true,
+    "bankAccount": true,
+    "birthday": false,
+    "address": false,
+    "notes": false
+  },
+
+  "social": {
+    "facebook": { "enabled": true, "url": "https://facebook.com/your.profile" },
+    "instagram": { "enabled": true, "url": "https://instagram.com/your.handle" },
+    "tiktok": { "enabled": true, "url": "https://tiktok.com/@your.handle" },
+    "youtube": { "enabled": false, "url": "" },
+    "github": { "enabled": true, "url": "https://github.com/your-username" },
+    "linkedin": { "enabled": false, "url": "" },
+    "zalo": { "enabled": false, "url": "" },
+    "x": { "enabled": false, "url": "" },
+    "discord": { "enabled": false, "url": "" },
+    "telegram": { "enabled": false, "url": "" },
+    "threads": { "enabled": false, "url": "" },
+    "snapchat": { "enabled": false, "url": "" }
+  },
+
+  "features": {
+    "search": true,
+    "filter": true,
+    "sorting": true,
+    "backup": true,
+    "import": true,
+    "privacyMode": true,
+    "darkMode": true,
+    "lightMode": true,
+    "timeline": true
+  },
+
+  "appearance": {
+    "defaultTheme": "light",
+    "defaultLayout": "grid",
+    "animations": true,
+    "cardTilt": true,
+    "glassEffect": true
+  }
+}

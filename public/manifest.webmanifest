@@ -1,0 +1,16 @@
+{
+  "name": "EYECORE LABS — Personal Contact Vault",
+  "short_name": "EYECORE LABS",
+  "description": "A private, offline-first contact vault. Every byte of data stays on your device.",
+  "id": "eyecore-labs",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#cfe7f5",
+  "theme_color": "#cfe7f5",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

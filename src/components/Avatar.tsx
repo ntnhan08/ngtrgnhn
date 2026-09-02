@@ -1,6 +1,5 @@
 /* Comic sticker avatar — square, ink outline, hard shadow, slight tilt.
- * Falls back to a monogram when no photo is set. Object URLs are shared
- * through the image service cache. */
+ * Falls back to a monogram when no photo is set. */
 import { useEffect, useState } from "react";
 import { resolveAvatarUrl } from "../services/images";
 import { avatarPalette, cn, initialsOf } from "../utils/format";
@@ -86,7 +85,9 @@ export function Avatar({
       ) : (
         <div
           className="flex h-full w-full items-center justify-center"
-          style={{ background: `linear-gradient(135deg, ${palette.from} 0%, ${palette.to} 100%)` }}
+          style={{
+            background: `linear-gradient(135deg, ${palette.from} 0%, ${palette.to} 100%)`,
+          }}
         >
           <span
             className="font-display font-bold text-white"

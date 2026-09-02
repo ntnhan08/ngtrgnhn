@@ -1,6 +1,6 @@
-/* Home — the owner's field-guide profile. No frame: identity and details
- * sit openly on the sky, lifted by a soft paper halo + ink halos so every
- * fact pops against the living backdrop. */
+/* Home — the owner's field-guide profile. No frame: identity and details sit
+ * openly on the sky, lifted by a soft paper halo + ink halos so every fact
+ * pops against the living backdrop. */
 import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {

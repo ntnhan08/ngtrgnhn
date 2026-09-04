@@ -32,20 +32,20 @@
   },
 
   "visibility": {
-    "phone": true,
-    "email": true,
-    "education": true,
-    "major": true,
-    "work": true,
-    "company": true,
-    "position": true,
-    "relationship": true,
-    "bank": true,
-    "bankName": true,
-    "bankAccount": true,
-    "birthday": false,
-    "address": false,
-    "notes": false
+    "phone": { "home": true, "full": true },
+    "email": { "home": true, "full": true },
+    "education": { "home": true, "full": true },
+    "major": { "home": true, "full": true },
+    "work": { "home": true, "full": true },
+    "company": { "home": true, "full": true },
+    "position": { "home": true, "full": true },
+    "relationship": { "home": true, "full": true },
+    "bank": { "home": false, "full": true },
+    "bankName": { "home": false, "full": true },
+    "bankAccount": { "home": false, "full": true },
+    "birthday": { "home": false, "full": false },
+    "address": { "home": false, "full": false },
+    "notes": { "home": false, "full": false }
   },
 
   "social": {

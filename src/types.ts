@@ -42,7 +42,13 @@ export type VisibilityKey =
   | "address"
   | "notes";
 
-export type VisibilityMap = Record<VisibilityKey, boolean>;
+export interface VisibilityScope {
+  /** Shown on the compact card — owner's Home screen and contact cards. */
+  home: boolean;
+  /** Shown on the expanded "View full profile" page. */
+  full: boolean;
+}
+export type VisibilityMap = Record<VisibilityKey, VisibilityScope>;
 
 export type ThemeMode = "dark" | "light" | "system";
 export type LayoutMode = "grid" | "list";
@@ -165,4 +171,4 @@ export interface ConfirmOptions {
   confirmLabel?: string;
   cancelLabel?: string;
   danger?: boolean;
-}
+} 

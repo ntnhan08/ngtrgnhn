@@ -183,15 +183,15 @@ function ProfilePage({ id }: { id: string }) {
   const address = contact.address.trim();
   const notes = contact.notes.trim();
 
-  const showContact = (v.phone && phone) || (v.email && email);
-  const showEducation = (v.education && school) || (v.major && major);
-  const showWork = (v.work && v.position && position) || (v.work && v.company && company);
+  const showContact = (v.phone.full && phone) || (v.email.full && email);
+  const showEducation = (v.education.full && school) || (v.major.full && major);
+  const showWork = (v.work.full && v.position.full && position) || (v.work.full && v.company.full && company);
   const showBank =
-    v.bank &&
-    ((v.bankName && contact.bank.bankName.trim()) ||
-      (v.bankAccount && contact.bank.accountNumber.replace(/\D/g, "")));
+    v.bank.full &&
+    ((v.bankName.full && contact.bank.bankName.trim()) ||
+      (v.bankAccount.full && contact.bank.accountNumber.replace(/\D/g, "")));
   const socialCount = Object.values(contact.social).filter((s) => s && s.enabled && s.url.trim()).length;
-  const showDetails = (v.birthday && birthday) || (v.address && address) || (v.notes && notes);
+  const showDetails = (v.birthday.full && birthday) || (v.address.full && address) || (v.notes.full && notes);
 
   const handleDelete = async () => {
     const ok = await askConfirm({
@@ -298,7 +298,7 @@ function ProfilePage({ id }: { id: string }) {
             <h1 className="font-display mt-5 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
               <span className="marker px-2">{contact.fullName}</span>
             </h1>
-            {v.relationship && (
+            {v.relationship.full && (
               <div className="mt-3.5">
                 <RelationshipBadge status={contact.relationship} />
               </div>
@@ -308,7 +308,7 @@ function ProfilePage({ id }: { id: string }) {
           {showContact && (
             <Panel title="Contact" icon={<Phone size={12} />} index={panelIndex++}>
               <div className="flex flex-col gap-4">
-                {v.phone && phone && (
+                {v.phone.full && phone && (
                   <InfoRow
                     icon={<Phone size={15} />}
                     label="Phone"
@@ -316,7 +316,7 @@ function ProfilePage({ id }: { id: string }) {
                     copyValue={privacy ? undefined : phone}
                   />
                 )}
-                {v.email && email && (
+                {v.email.full && email && (
                   <InfoRow
                     icon={<Mail size={15} />}
                     label="Email"
@@ -331,9 +331,9 @@ function ProfilePage({ id }: { id: string }) {
           {showEducation && (
             <Panel title="Education" icon={<GraduationCap size={12} />} index={panelIndex++}>
               <div className="flex flex-col gap-4">
-                {v.education && school && <InfoRow icon={<GraduationCap size={15} />} label="School" value={school} />}
-                {v.major && major && <InfoRow icon={<StickyNote size={15} />} label="Major" value={major} />}
-                {v.education && year && <InfoRow icon={<Cake size={15} />} label="Years" value={year} />}
+                {v.education.full && school && <InfoRow icon={<GraduationCap size={15} />} label="School" value={school} />}
+                {v.major.full && major && <InfoRow icon={<StickyNote size={15} />} label="Major" value={major} />}
+                {v.education.full && year && <InfoRow icon={<Cake size={15} />} label="Years" value={year} />}
               </div>
             </Panel>
           )}
@@ -341,8 +341,8 @@ function ProfilePage({ id }: { id: string }) {
           {showWork && (
             <Panel title="Work" icon={<Briefcase size={12} />} index={panelIndex++}>
               <div className="flex flex-col gap-4">
-                {v.work && v.position && position && <InfoRow icon={<Briefcase size={15} />} label="Position" value={position} />}
-                {v.work && v.company && company && <InfoRow icon={<Landmark size={15} />} label="Company" value={company} />}
+                {v.work.full && v.position.full && position && <InfoRow icon={<Briefcase size={15} />} label="Position" value={position} />}
+                {v.work.full && v.company.full && company && <InfoRow icon={<Landmark size={15} />} label="Company" value={company} />}
               </div>
             </Panel>
           )}
@@ -353,8 +353,8 @@ function ProfilePage({ id }: { id: string }) {
                 bankName={contact.bank.bankName}
                 accountNumber={contact.bank.accountNumber}
                 privacy={privacy}
-                showName={v.bankName}
-                showAccount={v.bankAccount}
+                showName={v.bankName.full}
+                showAccount={v.bankAccount.full}
               />
             </Panel>
           )}
@@ -368,9 +368,9 @@ function ProfilePage({ id }: { id: string }) {
           {showDetails && (
             <Panel title="Details" icon={<StickyNote size={12} />} index={panelIndex++}>
               <div className="flex flex-col gap-4">
-                {v.birthday && birthday && <InfoRow icon={<Cake size={15} />} label="Birthday" value={formatDate(birthday)} />}
-                {v.address && address && <InfoRow icon={<MapPin size={15} />} label="Address" value={address} />}
-                {v.notes && notes && (
+                {v.birthday.full && birthday && <InfoRow icon={<Cake size={15} />} label="Birthday" value={formatDate(birthday)} />}
+                {v.address.full && address && <InfoRow icon={<MapPin size={15} />} label="Address" value={address} />}
+                {v.notes.full && notes && (
                   <div className="rounded-[7px] border-2 border-dashed border-line-strong bg-raised/70 p-3.5">
                     <p className="font-display text-[10px] font-bold uppercase tracking-[0.18em] text-faint">Notes</p>
                     <p className="mt-1 whitespace-pre-line text-[14px] font-bold leading-relaxed text-ink">{notes}</p>

@@ -6,16 +6,21 @@ import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
   ArrowUpRight,
   Briefcase,
+  Cake,
   Check,
   Copy,
   Eye,
   EyeOff,
   GraduationCap,
+  Landmark,
   Mail,
+  MapPin,
   Phone,
   Sprout,
+  StickyNote,
 } from "lucide-react";
 import { Avatar } from "../components/Avatar";
+import { BankInfo } from "../components/BankInfo";
 import { Magnetic } from "../components/Fx";
 import { SocialLinks } from "../components/icons/BrandIcons";
 import { RelationshipBadge, Sensitive, Tip } from "../components/ui/Primitives";
@@ -23,7 +28,7 @@ import { OWNER_ID, ownerFromConfig } from "../services/configService";
 import { useAppStore } from "../store/appStore";
 import { useSettingsStore } from "../store/settingsStore";
 import { useUiStore } from "../store/uiStore";
-import { maskEmail, maskPhone } from "../utils/format";
+import { formatDate, maskEmail, maskPhone } from "../utils/format";
 
 const container: Variants = {
   hidden: {},
@@ -120,13 +125,20 @@ export function Home() {
   const owner = ownerFromConfig(config);
   const v = config.visibility;
 
-  const school = v.education ? owner.education.school.trim() : "";
-  const major = v.major ? owner.education.major.trim() : "";
-  const eduYear = v.education ? owner.education.year.trim() : "";
-  const position = v.work && v.position ? owner.work.position.trim() : "";
-  const company = v.work && v.company ? owner.work.company.trim() : "";
-  const phone = v.phone ? owner.phone.trim() : "";
-  const email = v.email ? owner.email.trim() : "";
+  const school = v.education.home ? owner.education.school.trim() : "";
+  const major = v.major.home ? owner.education.major.trim() : "";
+  const eduYear = v.education.home ? owner.education.year.trim() : "";
+  const position = v.work.home && v.position.home ? owner.work.position.trim() : "";
+  const company = v.work.home && v.company.home ? owner.work.company.trim() : "";
+  const phone = v.phone.home ? owner.phone.trim() : "";
+  const email = v.email.home ? owner.email.trim() : "";
+  const birthday = v.birthday.home ? owner.birthday.trim() : "";
+  const address = v.address.home ? owner.address.trim() : "";
+  const notes = v.notes.home ? owner.notes.trim() : "";
+  const showBank =
+    v.bank.home &&
+    ((v.bankName.home && owner.bank.bankName.trim()) ||
+      (v.bankAccount.home && owner.bank.accountNumber.replace(/\D/g, "")));
   const eyebrow = position || major || "Personal profile";
 
   return (
@@ -193,7 +205,7 @@ export function Home() {
           >
             {owner.fullName}
           </motion.h1>
-          {v.relationship && (
+          {v.relationship.home && (
             <motion.div variants={item} className="mt-2.5 flex justify-center sm:mt-4">
               <RelationshipBadge status={owner.relationship} />
             </motion.div>
@@ -240,6 +252,24 @@ export function Home() {
                 label="Email"
                 value={<Sensitive value={email} masked={maskEmail(email)} />}
                 copyValue={privacy ? undefined : email}
+              />
+            )}
+            {showBank && (
+              <BankInfo
+                bankName={owner.bank.bankName}
+                accountNumber={owner.bank.accountNumber}
+                privacy={privacy}
+                showName={v.bankName.home}
+                showAccount={v.bankAccount.home}
+              />
+            )}
+            {birthday && <Row icon={<Cake size={17} />} label="Birthday" value={formatDate(birthday)} />}
+            {address && <Row icon={<MapPin size={17} />} label="Address" value={address} />}
+            {notes && (
+              <Row
+                icon={<StickyNote size={17} />}
+                label="Notes"
+                value={<span className="whitespace-pre-line">{notes}</span>}
               />
             )}
           </motion.div>

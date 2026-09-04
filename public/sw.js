@@ -52,9 +52,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // config.json: network-first so manual edits apply after a reload; the
-  // cached copy still answers when offline.
-  if (url.pathname.includes("config.json")) {
+  // config.json / config.example.json: network-first so manual edits apply
+  // after a reload; the cached copy still answers when offline.
+  if (url.pathname.endsWith("/config.json") || url.pathname.endsWith("/config.example.json")) {
     event.respondWith(
       fetch(request)
         .then((response) => {

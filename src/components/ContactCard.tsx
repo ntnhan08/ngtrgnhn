@@ -65,9 +65,9 @@ export const ContactCard = memo(function ContactCard({
   const { rotateX, rotateY, onMouseMove, onMouseLeave } = useTilt(tiltOn);
 
   const v = config.visibility;
-  const school = v.education ? contact.education.school.trim() : "";
-  const position = v.work && v.position ? contact.work.position.trim() : "";
-  const company = v.work && v.company ? contact.work.company.trim() : "";
+  const school = v.education.home ? contact.education.school.trim() : "";
+  const position = v.work.home && v.position.home ? contact.work.position.trim() : "";
+  const company = v.work.home && v.company.home ? contact.work.company.trim() : "";
   const workLine = [position, company].filter(Boolean).join(" · ");
 
   const open = () => openProfile(contact.id);
@@ -102,7 +102,7 @@ export const ContactCard = memo(function ContactCard({
         <h3 className="font-display ink-pop mt-4 line-clamp-1 text-[18px] font-bold tracking-tight text-ink">
           {contact.fullName}
         </h3>
-        {v.relationship && (
+        {v.relationship.home && (
           <div className="mt-2">
             <RelationshipBadge status={contact.relationship} size="sm" />
           </div>
@@ -148,9 +148,9 @@ export const ContactRow = memo(function ContactRow({ contact }: { contact: Conta
   const openProfile = useUiStore((s) => s.openProfile);
   const v = config.visibility;
 
-  const school = v.education ? contact.education.school.trim() : "";
-  const position = v.work && v.position ? contact.work.position.trim() : "";
-  const company = v.work && v.company ? contact.work.company.trim() : "";
+  const school = v.education.home ? contact.education.school.trim() : "";
+  const position = v.work.home && v.position.home ? contact.work.position.trim() : "";
+  const company = v.work.home && v.company.home ? contact.work.company.trim() : "";
   const meta = [school, position, company].filter(Boolean).join(" · ");
 
   const open = () => openProfile(contact.id);
@@ -180,7 +180,7 @@ export const ContactRow = memo(function ContactRow({ contact }: { contact: Conta
           <p className="ink-pop font-display truncate text-[15px] font-bold text-ink">{contact.fullName}</p>
           <p className="ink-pop truncate text-xs font-extrabold text-muted">{meta || "No details yet"}</p>
         </div>
-        {v.relationship && (
+        {v.relationship.home && (
           <div className="hidden sm:block">
             <RelationshipBadge status={contact.relationship} size="sm" />
           </div>

@@ -35,9 +35,20 @@ export const DEFAULT_CONFIG: AppConfig = {
     notes: "",
   },
   visibility: {
-    phone: true, email: true, education: true, major: true, work: true,
-    company: true, position: true, relationship: true, bank: true,
-    bankName: true, bankAccount: true, birthday: true, address: true, notes: true,
+    phone: { home: true, full: true },
+    email: { home: true, full: true },
+    education: { home: true, full: true },
+    major: { home: true, full: true },
+    work: { home: true, full: true },
+    company: { home: true, full: true },
+    position: { home: true, full: true },
+    relationship: { home: true, full: true },
+    bank: { home: false, full: true },
+    bankName: { home: false, full: true },
+    bankAccount: { home: false, full: true },
+    birthday: { home: false, full: true },
+    address: { home: false, full: true },
+    notes: { home: false, full: true },
   },
   social: {
     facebook: { enabled: false, url: "" }, instagram: { enabled: false, url: "" },
@@ -126,7 +137,17 @@ export function validateConfig(raw: unknown): ConfigIssue[] {
   const visibility = raw.visibility;
   if (visibility !== undefined) {
     if (!isObject(visibility)) issues.push({ path: "visibility", message: "must be an object." });
-    else for (const key of VISIBILITY_KEYS) expect(`visibility.${key}`, visibility[key], isBool, "true or false");
+    else
+      for (const key of VISIBILITY_KEYS) {
+        const entry = visibility[key];
+        if (entry === undefined) continue;
+        if (!isObject(entry)) {
+          issues.push({ path: `visibility.${key}`, message: 'must be an object like { "home": true, "full": true }.' });
+        } else {
+          expect(`visibility.${key}.home`, entry.home, isBool, "true or false");
+          expect(`visibility.${key}.full`, entry.full, isBool, "true or false");
+        }
+      }
   }
 
   const social = raw.social;

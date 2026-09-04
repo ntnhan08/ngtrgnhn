@@ -28,17 +28,30 @@ app never crashes. A clean template lives in `public/config/config.example.json`
 | `profile.relationship.status` | `"single" \| "dating" \| "married" \| "complicated" \| "unknown"` | Relationship badge on your card. |
 | `profile.bank.bankName` | string | Bank name (any string; Vietnamese banks suggested in the form). |
 | `profile.bank.accountNumber` | string | Account number — always masked until “Show” is pressed. |
-| `profile.birthday` | string | `YYYY-MM-DD`, profile page only. |
-| `profile.address` | string | Profile page only. |
-| `profile.notes` | string | Free-form notes, profile page only. |
+| `profile.birthday` | string | `YYYY-MM-DD`. |
+| `profile.address` | string | Home address, free text. |
+| `profile.notes` | string | Free-form notes. |
 
-## visibility — show/hide everywhere
+## visibility — show/hide per surface
 
-Each flag removes the field from the rendered DOM (card, profile, metadata) when `false` — the
-layout reflows; nothing is left as an empty gap. Data itself remains untouched in IndexedDB.
+Each field has two independent flags instead of one:
 
-`phone` · `email` · `education` (school) · `major` · `work` (section) · `company` · `position` ·
-`relationship` · `bank` (section) · `bankName` · `bankAccount` · `birthday` · `address` · `notes`
+| Flag | Controls |
+| --- | --- |
+| `home` | The compact card — owner's Home screen and contact cards in the vault list. |
+| `full` | The expanded "View full profile" page. |
+
+```json
+"birthday": { "home": false, "full": true }
+```
+
+`false` removes the field from the rendered DOM entirely (never `visibility:hidden`) — the layout
+reflows; nothing is left as an empty gap. Data itself remains untouched in IndexedDB. A field can
+be home-only, full-only, both, or neither.
+
+Keys: `phone` · `email` · `education` (school) · `major` · `work` (section) · `company` ·
+`position` · `relationship` · `bank` (section) · `bankName` · `bankAccount` · `birthday` ·
+`address` · `notes`
 
 ## social — icon-only links
 

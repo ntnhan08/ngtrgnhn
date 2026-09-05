@@ -58,12 +58,12 @@ export interface BurstParticle {
   y: number;
   rotate: number;
   scale: number;
-  kind: "leaf" | "star";
+  kind: "cube" | "gem";
   color: string;
   delay: number;
 }
 
-const BURST_COLORS = ["#3d9b5f", "#ffd23f", "#8ecae6", "#e2694f", "#6fae63"];
+const BURST_COLORS = ["#5d9c3f", "#ffd93d", "#5ce1e6", "#e0432f", "#2ecc71"];
 
 export function makeBurst(count: number): BurstParticle[] {
   return Array.from({ length: count }, () => {
@@ -74,7 +74,7 @@ export function makeBurst(count: number): BurstParticle[] {
       y: Math.sin(angle) * dist - 40,
       rotate: (Math.random() - 0.5) * 540,
       scale: 0.7 + Math.random() * 0.8,
-      kind: Math.random() > 0.45 ? "leaf" : "star",
+      kind: Math.random() > 0.45 ? "cube" : "gem",
       color: BURST_COLORS[Math.floor(Math.random() * BURST_COLORS.length)],
       delay: Math.random() * 0.06,
     };
@@ -82,19 +82,17 @@ export function makeBurst(count: number): BurstParticle[] {
 }
 
 function ParticleShape({ p }: { p: BurstParticle }) {
-  if (p.kind === "leaf") {
+  if (p.kind === "cube") {
     return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2.6C7.6 6.4 5.2 11 12 21.4C18.8 11 16.4 6.4 12 2.6Z" fill={p.color} />
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <rect x="4" y="4" width="16" height="16" fill={p.color} stroke="#2b2014" strokeWidth="1.6" />
+        <rect x="4" y="4" width="16" height="5" fill="#ffffff" opacity="0.35" />
       </svg>
     );
   }
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-      <path
-        d="M12 1.5 L14.8 9.2 L22.5 12 L14.8 14.8 L12 22.5 L9.2 14.8 L1.5 12 L9.2 9.2 Z"
-        fill={p.color}
-      />
+      <polygon points="12,1.5 22.5,9 18,22.5 6,22.5 1.5,9" fill={p.color} stroke="#2b2014" strokeWidth="1.4" strokeLinejoin="miter" />
     </svg>
   );
 }

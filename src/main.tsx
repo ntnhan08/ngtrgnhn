@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 // Fonts bundled locally via fontsource — zero network requests, ever.
-import "@fontsource-variable/baloo-2";
+import "@fontsource/silkscreen/400.css";
+import "@fontsource/silkscreen/700.css";
 import "@fontsource-variable/nunito";
 import "./index.css";
 import App from "./App";

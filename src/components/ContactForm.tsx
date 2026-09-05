@@ -188,7 +188,7 @@ export function ContactForm() {
         avatarId = await storeImage(avatarFile.blob, avatarFile.mime, avatarFile.ext);
       }
 
-      const  NewContact = {
+      const data = {
         fullName: name,
         avatarId,
         phone: form.phone.trim(),

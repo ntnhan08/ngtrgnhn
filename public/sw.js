@@ -4,7 +4,7 @@
  * config.json, images) is cached locally, so the app behaves identically
  * online and offline.
  */
-const CACHE = "eyecore-v4";
+const CACHE = "eyecore-v5";
 const APP_SHELL = [
   "./",
   "./index.html",

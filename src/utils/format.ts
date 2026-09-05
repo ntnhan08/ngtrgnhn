@@ -139,14 +139,14 @@ export const VN_BANKS: string[] = [
 /* ---------------------------- monogram avatars ---------------------------- */
 
 const AVATAR_PALETTES: Array<{ from: string; to: string }> = [
-  { from: "#7fbf8e", to: "#3d7a52" },
-  { from: "#ffd76a", to: "#d99a26" },
-  { from: "#8ecae6", to: "#3f7fb5" },
-  { from: "#f4978e", to: "#c05a4e" },
-  { from: "#b5c99a", to: "#6f8f4f" },
-  { from: "#cdb4db", to: "#8a63a8" },
-  { from: "#f9c6b3", to: "#d9825f" },
-  { from: "#a3d5c9", to: "#4f8f7d" },
+  { from: "#6fcf52", to: "#3d7a2e" }, // grass
+  { from: "#5ce1e6", to: "#1f8a93" }, // diamond
+  { from: "#ffd93d", to: "#c98e0f" }, // gold
+  { from: "#ff6b57", to: "#a82f1f" }, // redstone
+  { from: "#3ddc84", to: "#187a45" }, // emerald
+  { from: "#5a7dfa", to: "#1e2f8f" }, // lapis
+  { from: "#c084fc", to: "#6a3fa0" }, // amethyst
+  { from: "#d0895a", to: "#7a4f2a" }, // copper
 ];
 
 export function avatarPalette(seed: string): { from: string; to: string } {

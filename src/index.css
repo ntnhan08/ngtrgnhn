@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   EYECORE LABS — "Nature School" comic design system.
-   Cartoon outdoors: sky-blue paper, deep pine ink, sun yellow + leaf green.
-   Baloo 2 (display, Vietnamese) + Nunito (body) bundled locally.
-   Everything runs on transform/opacity for 60fps compositing.
+   EYECORE LABS — "Minecraft" block-world design system.
+   Blocky voxel panels: grass green, gold, diamond cyan, deep stone ink.
+   Silkscreen (pixel display) + Nunito (Vietnamese-safe headings/body) bundled
+   locally — 100% offline, no CDN. Everything runs on transform/opacity for
+   60fps compositing.
 --------------------------------------------------------------------------- */
 @theme inline {
   --color-bg: var(--bg);
@@ -26,35 +27,69 @@
   --color-danger: var(--danger);
   --color-sun: var(--sun);
   --color-sky: var(--sky);
-  --font-display: "Baloo 2 Variable", "Baloo 2", ui-rounded, "Manrope Variable", system-ui, sans-serif;
+  --font-display: "Silkscreen", "Nunito Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Nunito Variable", "Nunito", ui-rounded, system-ui, sans-serif;
   --font-body: "Nunito Variable", "Nunito", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root,
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #cfe7f5;
-  --bg-deep: #b7daf0;
-  --panel: rgba(255, 255, 250, 0.86);
-  --raised: rgba(255, 255, 250, 0.9);
-  --overlay: rgba(28, 44, 58, 0.42);
-  --line: rgba(34, 58, 43, 0.16);
-  --line-strong: rgba(34, 58, 43, 0.3);
-  --ink: #223a2b;
-  --inkline: #223a2b;
-  --muted: #4c6a54;
-  --faint: #7d957f;
-  --accent: #3d9b5f;
-  --accent-hi: #2e7a49;
-  --accent-soft: rgba(61, 155, 95, 0.14);
-  --on-accent: #f4fbf2;
-  --success: #3d9b5f;
+  /* "Overworld — Day" */
+  --bg: #8fcae8;
+  --bg-deep: #5fa8d8;
+  --sky-top: #cdeeff;
+  --panel: rgba(232, 224, 200, 0.92);
+  --raised: rgba(240, 233, 210, 0.95);
+  --overlay: rgba(24, 18, 10, 0.5);
+  --line: rgba(43, 32, 20, 0.16);
+  --line-strong: rgba(43, 32, 20, 0.32);
+  --ink: #2b2014;
+  --inkline: #2b2014;
+  --muted: #5b4a34;
+  --faint: #8a7a5e;
+  --accent: #4c9a2a;
+  --accent-hi: #3a7a1f;
+  --accent-soft: rgba(76, 154, 42, 0.16);
+  --on-accent: #f5fbe8;
+  --success: #4c9a2a;
   --warning: #e0a52e;
-  --danger: #e2694f;
-  --sun: #ffd23f;
-  --sky: #bfe3f5;
-  --shadow-ink: rgba(34, 58, 43, 0.18);
-  --shadow-soft: rgba(34, 58, 43, 0.12);
+  --danger: #c0392b;
+  --sun: #ffd93d;
+  --sky: #a8d8f0;
+  --shadow-ink: rgba(42, 32, 19, 0.32);
+  --shadow-soft: rgba(42, 32, 19, 0.18);
+  --halo-base: #f8f0d2;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  /* "Overworld — Dusk": a low warm sun still reads correctly against this
+     sky, so the background scene needs no separate night variant. */
+  --bg: #5e4066;
+  --bg-deep: #241730;
+  --sky-top: #8a5a72;
+  --panel: rgba(40, 32, 42, 0.92);
+  --raised: rgba(50, 41, 52, 0.94);
+  --overlay: rgba(8, 5, 12, 0.62);
+  --line: rgba(230, 214, 200, 0.14);
+  --line-strong: rgba(230, 214, 200, 0.28);
+  --ink: #ede2cd;
+  --inkline: #ede2cd;
+  --muted: #b7a98e;
+  --faint: #8b7d68;
+  --accent: #7ed957;
+  --accent-hi: #97e876;
+  --accent-soft: rgba(126, 217, 87, 0.2);
+  --on-accent: #16250c;
+  --success: #7ed957;
+  --warning: #f2c744;
+  --danger: #ff6b55;
+  --sun: #ffc857;
+  --sky: #4a3352;
+  --shadow-ink: rgba(8, 5, 12, 0.55);
+  --shadow-soft: rgba(8, 5, 12, 0.32);
+  --halo-base: #1a1220;
 }
 
 html {
@@ -78,13 +113,13 @@ body {
 }
 
 ::selection {
-  background: rgba(255, 210, 63, 0.55);
+  background: rgba(255, 217, 61, 0.55);
   color: var(--ink);
 }
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 * {
   scrollbar-width: thin;
@@ -96,7 +131,7 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--line);
-  border-radius: 999px;
+  border-radius: 2px;
   border: 3px solid transparent;
   background-clip: content-box;
 }
@@ -105,36 +140,45 @@ body {
 /* ------------------------------- surfaces ------------------------------- */
 .glass {
   background: var(--panel);
-  border: 2.5px solid var(--line-strong);
-  border-radius: 12px;
-  box-shadow: 6px 7px 0 var(--shadow-soft);
+  border: 3px solid var(--line-strong);
+  border-radius: 4px;
+  box-shadow:
+    6px 7px 0 var(--shadow-soft),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.22),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.16);
 }
 .glass-plain {
   background: var(--panel);
-  border: 2.5px solid var(--line-strong);
-  border-radius: 8px;
+  border: 3px solid var(--line-strong);
+  border-radius: 3px;
 }
 .chip-square {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 2.5px solid var(--inkline);
-  border-radius: 8px;
+  border: 3px solid var(--inkline);
+  border-radius: 3px;
   background: var(--raised);
+  box-shadow:
+    inset 2px 2px 0 rgba(255, 255, 255, 0.28),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.24);
 }
 
-/* comic buttons — springy press-down feel */
+/* blocky item-button — springy press-down feel, inset bevel like a slot */
 .btn-comic {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   border: 3px solid var(--inkline);
-  border-radius: 7px;
+  border-radius: 3px;
   font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: 0.02em;
-  box-shadow: 4px 4px 0 var(--shadow-ink);
+  box-shadow:
+    4px 4px 0 var(--shadow-ink),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.3),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.25);
   transition:
     transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
     box-shadow 0.16s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -145,11 +189,17 @@ body {
 }
 .btn-comic:hover {
   transform: translate(-1px, -3px);
-  box-shadow: 6px 8px 0 var(--shadow-ink);
+  box-shadow:
+    6px 8px 0 var(--shadow-ink),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.36),
+    inset -2px -2px 0 rgba(0, 0, 0, 0.2);
 }
 .btn-comic:active {
   transform: translate(3px, 3px);
-  box-shadow: 0 0 0 var(--shadow-ink);
+  box-shadow:
+    0 0 0 var(--shadow-ink),
+    inset 2px 2px 0 rgba(0, 0, 0, 0.3),
+    inset -2px -2px 0 rgba(255, 255, 255, 0.16);
   transition-duration: 0.06s;
 }
 .btn-accent { background: var(--accent); color: var(--on-accent); }
@@ -171,13 +221,13 @@ body {
 .shine:hover::after { transform: translateX(120%); }
 
 /* ------------------------- making info pop on sky ------------------------- */
-/* soft white halo behind text so details lift off the living backdrop */
+/* soft parchment halo behind text so details lift off the living backdrop */
 .ink-pop {
   text-shadow:
-    0 1px 0 rgba(255, 255, 250, 0.95),
-    0 0 14px rgba(255, 255, 250, 0.75),
-    0 0 26px rgba(255, 255, 250, 0.5),
-    0 2px 10px rgba(255, 255, 250, 0.55);
+    0 1px 0 color-mix(in srgb, var(--halo-base) 95%, transparent),
+    0 0 14px color-mix(in srgb, var(--halo-base) 75%, transparent),
+    0 0 26px color-mix(in srgb, var(--halo-base) 50%, transparent),
+    0 2px 10px color-mix(in srgb, var(--halo-base) 55%, transparent);
 }
 /* near-solid paper glow behind the whole home profile column — two stacked
    ellipses: an almost-opaque core and a wide soft fringe. No box, no frame. */
@@ -189,27 +239,27 @@ body {
   height: 132%;
   transform: translate(-50%, -50%);
   background:
-    radial-gradient(ellipse 40% 46% at 50% 50%, rgba(255, 255, 250, 0.96) 0%, rgba(255, 255, 250, 0.92) 34%, rgba(255, 255, 250, 0) 62%),
-    radial-gradient(ellipse 50% 56% at 50% 50%, rgba(255, 255, 250, 0.55) 26%, rgba(255, 255, 250, 0.28) 48%, rgba(255, 255, 250, 0) 72%);
+    radial-gradient(ellipse 40% 46% at 50% 50%, color-mix(in srgb, var(--halo-base) 96%, transparent) 0%, color-mix(in srgb, var(--halo-base) 92%, transparent) 34%, color-mix(in srgb, var(--halo-base) 0%, transparent) 62%),
+    radial-gradient(ellipse 50% 56% at 50% 50%, color-mix(in srgb, var(--halo-base) 55%, transparent) 26%, color-mix(in srgb, var(--halo-base) 28%, transparent) 48%, color-mix(in srgb, var(--halo-base) 0%, transparent) 72%);
   pointer-events: none;
 }
 .pop-chip {
   box-shadow:
-    0 0 0 4px rgba(255, 255, 250, 0.55),
-    0 3px 12px rgba(34, 58, 43, 0.14);
+    0 0 0 4px color-mix(in srgb, var(--halo-base) 60%, transparent),
+    0 3px 12px var(--shadow-soft);
 }
-/* yellow highlighter swipe behind headline words */
+/* gold nameplate swipe behind headline words */
 .marker {
   background-image: linear-gradient(
     104deg,
-    rgba(255, 210, 63, 0) 0.9%,
-    rgba(255, 210, 63, 0.85) 2.4%,
-    rgba(255, 210, 63, 0.6) 5.8%,
-    rgba(255, 210, 63, 0.6) 93%,
-    rgba(255, 210, 63, 0.9) 96%,
-    rgba(255, 210, 63, 0) 98%
+    color-mix(in srgb, var(--sun) 0%, transparent) 0.5%,
+    color-mix(in srgb, var(--sun) 90%, transparent) 3%,
+    color-mix(in srgb, var(--sun) 65%, transparent) 6%,
+    color-mix(in srgb, var(--sun) 65%, transparent) 92%,
+    color-mix(in srgb, var(--sun) 92%, transparent) 96%,
+    color-mix(in srgb, var(--sun) 0%, transparent) 98.5%
   );
-  border-radius: 3px;
+  border-radius: 2px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -222,8 +272,8 @@ body {
   inset: -36px; /* overscanned so parallax never reveals an edge */
   z-index: 0;
   background:
-    radial-gradient(760px 760px at calc(100% - 96px) 44px, rgba(255, 236, 170, 0.6), transparent 62%),
-    linear-gradient(180deg, #dceef9 0%, var(--bg) 42%, var(--bg-deep) 100%);
+    radial-gradient(760px 760px at calc(100% - 96px) 44px, color-mix(in srgb, var(--sun) 45%, transparent), transparent 62%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--bg) 42%, var(--bg-deep) 100%);
   will-change: transform;
   transform: translateZ(0);
 }
@@ -412,12 +462,13 @@ body {
 .field {
   width: 100%;
   background: var(--raised);
-  border: 2.5px solid var(--line-strong);
-  border-radius: 10px;
+  border: 3px solid var(--line-strong);
+  border-radius: 3px;
   padding: 10px 14px;
   font-size: 14px;
   font-weight: 700;
   color: var(--ink);
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.14), inset -1px -1px 0 rgba(255, 255, 255, 0.2);
   transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.12s ease;
 }
 .field::placeholder { color: var(--faint); }
@@ -445,7 +496,7 @@ input[type="date"] { color-scheme: inherit; }
   font-size: 11px;
   font-weight: 700;
   padding: 3px 9px;
-  border-radius: 7px;
+  border-radius: 3px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -469,7 +520,7 @@ input[type="date"] { color-scheme: inherit; }
 .social-btn:focus-visible {
   color: var(--brand);
   border-color: var(--brand);
-  background: color-mix(in srgb, var(--brand) 12%, #fffaf0);
+  background: color-mix(in srgb, var(--brand) 12%, var(--raised));
   transform: scale(1.12) rotate(-3deg);
   box-shadow: 3px 4px 0 color-mix(in srgb, var(--brand) 30%, transparent);
 }
@@ -485,7 +536,7 @@ input[type="date"] { color-scheme: inherit; }
   z-index: 60;
   pointer-events: none;
   opacity: 0.05;
-  background-image: url("image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
 }
 .cursor-glow {
   position: fixed;
@@ -497,7 +548,7 @@ input[type="date"] { color-scheme: inherit; }
   margin: -170px 0 0 -170px;
   border-radius: 9999px;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 214, 92, 0.2), rgba(255, 214, 92, 0) 62%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--sun) 55%, transparent), transparent 62%);
   will-change: transform;
 }
 

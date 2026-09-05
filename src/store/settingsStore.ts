@@ -32,7 +32,7 @@ function applyTheme(theme: ThemeMode) {
       : theme;
   document.documentElement.setAttribute("data-theme", resolved);
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", resolved === "dark" ? "#0a0e15" : "#cfe7f5");
+  if (meta) meta.setAttribute("content", resolved === "dark" ? "#241730" : "#8fcae8");
 }
 
 function applyAnimation(mode: AnimationMode) {

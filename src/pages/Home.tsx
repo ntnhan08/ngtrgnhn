@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
   ArrowUpRight,
+  Blocks,
   Briefcase,
   Cake,
   Check,
@@ -16,7 +17,6 @@ import {
   Mail,
   MapPin,
   Phone,
-  Sprout,
   StickyNote,
 } from "lucide-react";
 import { Avatar } from "../components/Avatar";
@@ -193,14 +193,14 @@ export function Home() {
           {/* identity */}
           <motion.p
             variants={item}
-            className="ink-pop font-display mt-3.5 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[0.26em] text-accent-hi sm:mt-8 sm:text-[12px]"
+            className="ink-pop font-heading mt-3.5 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-[0.26em] text-accent-hi sm:mt-8 sm:text-[12px]"
           >
-            <Sprout size={14} />
+            <Blocks size={14} />
             {eyebrow}
           </motion.p>
           <motion.h1
             variants={item}
-            className="font-display mt-1.5 text-center text-[38px] font-bold leading-[1.02] tracking-tight text-ink sm:mt-2 sm:text-[58px]"
+            className="font-heading mt-1.5 text-center text-[38px] font-bold leading-[1.02] tracking-tight text-ink sm:mt-2 sm:text-[58px]"
             style={{ textShadow: "0.06em 0.07em 0 var(--sky), 0.12em 0.14em 0 var(--shadow-soft)" }}
           >
             {owner.fullName}
@@ -225,7 +225,7 @@ export function Home() {
                 }
               />
             )}
-            {major && <Row icon={<Sprout size={17} />} label="Major" value={major} />}
+            {major && <Row icon={<Blocks size={17} />} label="Major" value={major} />}
             {position && (
               <Row
                 icon={<Briefcase size={17} />}

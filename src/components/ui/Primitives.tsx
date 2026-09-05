@@ -1,4 +1,4 @@
-/* Shared UI primitives — comic nature-school styling.
+/* Shared UI primitives — blocky Minecraft-item styling.
  * Tooltip, Toggle, Segmented, Modal (swipe-to-dismiss), ConfirmBody,
  * EmptyState, Sensitive (privacy-animated text), RelationshipBadge. */
 import { useEffect, useId, useRef, type ReactNode } from "react";

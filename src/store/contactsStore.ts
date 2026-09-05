@@ -12,7 +12,7 @@ interface ContactsState {
   contacts: ContactRecord[];
   loaded: boolean;
   load: () => Promise<void>;
-  add: ( NewContact) => Promise<ContactRecord>;
+  add: (data: NewContact) => Promise<ContactRecord>;
   update: (id: string, patch: Partial<ContactRecord>) => Promise<void>;
   remove: (id: string) => Promise<void>;
   mergeAll: (contacts: ContactRecord[]) => Promise<void>;

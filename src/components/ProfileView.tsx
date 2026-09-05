@@ -295,7 +295,7 @@ function ProfilePage({ id }: { id: string }) {
             <motion.div whileHover={{ rotate: 0, scale: 1.04 }} className="rotate-[-3deg]" transition={{ type: "spring", stiffness: 300, damping: 18 }}>
               <Avatar name={contact.fullName} avatarId={contact.avatarId} avatarPath={contact.avatarPath} size={124} ring />
             </motion.div>
-            <h1 className="font-display mt-5 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+            <h1 className="font-heading mt-5 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
               <span className="marker px-2">{contact.fullName}</span>
             </h1>
             {v.relationship.full && (

@@ -1,12 +1,38 @@
-/* App chrome — a living cartoon nature-school scene behind everything.
+/* App chrome — a living blocky Minecraft-style Overworld behind everything.
  * No taskbars, no sidebars: the scene IS the interface. The backdrop lives
- * at z-0, content at z-1, so nothing can ever cover it. */
+ * at z-0, content at z-1, so nothing can ever cover it. Every sprite here is
+ * hand-built from flat rects/polygons (no curves) for a true voxel-pixel
+ * look, with a light top-bevel / dark bottom-bevel on most faces to fake
+ * the game's blocky ambient-occlusion shading. */
 import { useEffect } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { CursorGlow } from "./Fx";
 
-const INK = "#223a2b";
+const INK = "#2b2014";
+const PAPER = "#fdfcf3";
+const GOLD = "#ffd93d";
+const GOLD_DK = "#d9a017";
+const GRASS = "#5d9c3f";
+const GRASS_DK = "#3f6b25";
+const DIRT = "#8b5a2b";
+const DIRT_DK = "#6b4018";
+const WOOD = "#9c6b3e";
+const WOOD_DK = "#6b4423";
+const LEAF = "#4f8f3f";
+const LEAF_DK = "#396b2c";
+const LEAF_LT = "#6fb452";
+const DIAMOND = "#5ce1e6";
+const DIAMOND_DK = "#2a9aa0";
+const EMERALD = "#2ecc71";
+const REDSTONE = "#e0432f";
+const REDSTONE_DK = "#a82f1f";
+const STONE = "#9c9c9c";
+const STONE_DK = "#6e6e6e";
+const STONE_LT = "#c6c6c6";
+const SKY_BLUE = "#8ecae6";
+const SKY_BLUE_DK = "#5fa8cf";
+
 const finePointer = () =>
   typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches;
 
@@ -50,39 +76,46 @@ function Sun() {
     <div className="pointer-events-none absolute -right-16 -top-16 h-[300px] w-[300px] sm:h-[380px] sm:w-[380px]" aria-hidden="true">
       <svg viewBox="0 0 200 200" className="h-full w-full">
         <g className="sun-rays">
-          {Array.from({ length: 12 }, (_, i) => (
+          {Array.from({ length: 8 }, (_, i) => (
             <rect
               key={i}
-              x="96"
-              y="6"
-              width="8"
-              height="34"
-              rx="3"
-              fill="#ffd23f"
+              x="92"
+              y="2"
+              width="16"
+              height="32"
+              fill={GOLD}
               stroke={INK}
               strokeWidth="3"
-              transform={`rotate(${i * 30} 100 100)`}
+              transform={`rotate(${i * 45} 100 100)`}
             />
           ))}
         </g>
-        <circle cx="100" cy="100" r="52" fill="#ffd23f" stroke={INK} strokeWidth="5" />
-        <circle cx="84" cy="92" r="5" fill={INK} />
-        <circle cx="116" cy="92" r="5" fill={INK} />
-        <path d="M82 112 Q100 126 118 112" fill="none" stroke={INK} strokeWidth="5" strokeLinecap="round" />
+        <rect x="46" y="46" width="108" height="108" fill={GOLD} stroke={INK} strokeWidth="5" />
+        <rect x="46" y="46" width="108" height="16" fill="#fff1a6" opacity="0.55" />
+        <rect x="46" y="138" width="108" height="16" fill={GOLD_DK} opacity="0.4" />
+        <rect x="70" y="82" width="14" height="14" fill={INK} />
+        <rect x="116" y="82" width="14" height="14" fill={INK} />
+        <rect x="76" y="120" width="10" height="8" fill={INK} />
+        <rect x="86" y="126" width="28" height="8" fill={INK} />
+        <rect x="114" y="120" width="10" height="8" fill={INK} />
       </svg>
     </div>
   );
 }
 
 /* --------------------------------- rainbow --------------------------------- */
+/* A stepped "bridge" arch instead of a smooth arc — same 4-band composition
+   as before, just voxelised into a staircase silhouette. */
 
 function Rainbow({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 200 110" className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
-      <path d="M16 106 A84 84 0 0 1 184 106" fill="none" stroke="#e2694f" strokeWidth="12" strokeLinecap="round" />
-      <path d="M34 106 A66 66 0 0 1 166 106" fill="none" stroke="#ffd23f" strokeWidth="12" strokeLinecap="round" />
-      <path d="M52 106 A48 48 0 0 1 148 106" fill="none" stroke="#3d9b5f" strokeWidth="12" strokeLinecap="round" />
-      <path d="M70 106 A30 30 0 0 1 130 106" fill="none" stroke="#8ecae6" strokeWidth="12" strokeLinecap="round" />
+      <g fill="none" strokeLinejoin="miter" strokeLinecap="square">
+        <path d="M16,106 L16,86 L44,86 L44,58 L72,58 L72,26 L128,26 L128,58 L156,58 L156,86 L184,86 L184,106" stroke={REDSTONE} strokeWidth="11" />
+        <path d="M34,106 L34,90 L56,90 L56,66 L78,66 L78,38 L122,38 L122,66 L144,66 L144,90 L166,90 L166,106" stroke={GOLD} strokeWidth="11" />
+        <path d="M52,106 L52,94 L68,94 L68,74 L84,74 L84,50 L116,50 L116,74 L132,74 L132,94 L148,94 L148,106" stroke={EMERALD} strokeWidth="11" />
+        <path d="M70,106 L70,98 L80,98 L80,82 L90,82 L90,62 L110,62 L110,82 L120,82 L120,98 L130,98 L130,106" stroke={DIAMOND} strokeWidth="11" />
+      </g>
     </svg>
   );
 }
@@ -106,11 +139,11 @@ function Cloud({
     <div className="cloud-drift" style={{ top, "--dur": `${dur}s`, "--delay": `${delay}s`, opacity } as CSSProperties} aria-hidden="true">
       <svg width={190 * scale} height={80 * scale} viewBox="0 0 190 80">
         <path
-          d="M38 62 C16 62 10 44 24 36 C22 18 44 8 58 18 C66 2 96 2 104 16 C122 4 148 14 146 32 C166 32 174 50 158 60 C150 66 138 62 130 62 Z"
+          d="M8,68 L8,44 L20,44 L20,24 L74,24 L74,44 L82,44 L82,12 L140,12 L140,44 L148,44 L148,28 L172,28 L172,44 L182,44 L182,68 Z"
           fill="#ffffff"
           stroke={INK}
           strokeWidth="4"
-          strokeLinejoin="round"
+          strokeLinejoin="miter"
         />
       </svg>
     </div>
@@ -138,28 +171,29 @@ function Bird({
     <div className="bird-fly" style={{ top, "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties} aria-hidden="true">
       <div className="bird-bob" style={{ "--bob": `${bob}s` } as CSSProperties}>
         <svg width={44 * scale} height={30 * scale} viewBox="0 0 44 30" style={flip ? { transform: "scaleX(-1)" } : undefined}>
-          <ellipse cx="20" cy="17" rx="10" ry="6.5" fill="#fdfcf3" stroke={INK} strokeWidth="2.4" />
-          <circle cx="31" cy="13" r="5.5" fill="#fdfcf3" stroke={INK} strokeWidth="2.4" />
-          <path d="M36 12.5 L42 14 L36 16 Z" fill="#e0a52e" stroke={INK} strokeWidth="1.6" strokeLinejoin="round" />
-          <circle cx="32.5" cy="11.5" r="1.2" fill={INK} />
-          <path d="M9 17 L2 15 M9 19 L2 21" stroke={INK} strokeWidth="2" strokeLinecap="round" />
-          <path className="bird-wing" d="M14 14 Q20 2 29 8 Q22 12 18 15 Z" fill="#8ecae6" stroke={INK} strokeWidth="2" />
-          <path className="bird-wing far" d="M15 15 Q19 6 26 9 Q21 12 18 15 Z" fill="#5fa8cf" stroke={INK} strokeWidth="1.6" />
+          <rect x="3" y="15" width="9" height="6" fill={SKY_BLUE_DK} stroke={INK} strokeWidth="2" />
+          <rect x="11" y="10" width="17" height="12" fill={PAPER} stroke={INK} strokeWidth="2.4" />
+          <rect x="27" y="6" width="10" height="10" fill={PAPER} stroke={INK} strokeWidth="2.4" />
+          <rect x="37" y="9.5" width="6" height="4" fill={GOLD_DK} stroke={INK} strokeWidth="1.4" />
+          <rect x="31" y="9" width="2.6" height="2.6" fill={INK} />
+          <rect className="bird-wing" x="12" y="3" width="15" height="9" fill={SKY_BLUE} stroke={INK} strokeWidth="2" />
+          <rect className="bird-wing far" x="13" y="6" width="12" height="8" fill={SKY_BLUE_DK} stroke={INK} strokeWidth="1.6" />
         </svg>
       </div>
     </div>
   );
 }
 
-/* ------------------------------- paper plane ------------------------------- */
+/* ----------------------------------- arrow ---------------------------------- */
 
-function PaperPlane({ className, dur = 26, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
+function Arrow({ className, dur = 26, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
   return (
     <div className={`plane-fly pointer-events-none absolute ${className ?? ""}`} style={{ "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties} aria-hidden="true">
-      <svg width="36" height="26" viewBox="0 0 36 26">
-        <path d="M1 19 H8 M4 23 H10" stroke={INK} strokeWidth="1.8" strokeLinecap="round" opacity="0.35" />
-        <path d="M14 14 L34 3 L19 24 L16.5 16 Z" fill="#fdfcf3" stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
-        <path d="M16.5 16 L34 3" stroke={INK} strokeWidth="2" strokeLinecap="round" />
+      <svg width="40" height="16" viewBox="0 0 40 16">
+        <rect x="4" y="6.5" width="26" height="3" fill={WOOD} stroke={INK} strokeWidth="1.2" />
+        <polygon points="29,1 39,8 29,15" fill={STONE_LT} stroke={INK} strokeWidth="1.6" strokeLinejoin="miter" />
+        <polygon points="4,2 11,8 4,8" fill={REDSTONE} stroke={INK} strokeWidth="1.2" strokeLinejoin="miter" />
+        <polygon points="4,14 11,8 4,8" fill={REDSTONE_DK} stroke={INK} strokeWidth="1.2" strokeLinejoin="miter" />
       </svg>
     </div>
   );
@@ -171,30 +205,33 @@ function Balloon({ className }: { className?: string }) {
   return (
     <div className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
       <div className="balloon-bob">
-        <svg width="72" height="104" viewBox="0 0 72 104">
-          <path d="M36 4 C14 4 4 24 6 40 C8 58 24 70 30 74 L42 74 C48 70 64 58 66 40 C68 24 58 4 36 4 Z" fill="#e2694f" stroke={INK} strokeWidth="3" />
-          <path d="M24 6 C14 14 12 30 14 42 C16 56 24 66 29 72 L24 72 C16 62 8 50 8 36 C8 22 14 10 24 6 Z" fill="#ffd23f" stroke={INK} strokeWidth="2" />
-          <path d="M48 6 C58 14 60 30 58 42 C56 56 48 66 43 72 L48 72 C56 62 64 50 64 36 C64 22 58 10 48 6 Z" fill="#8ecae6" stroke={INK} strokeWidth="2" />
-          <path d="M30 74 L28 84 M42 74 L44 84" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
-          <rect x="26" y="84" width="20" height="14" rx="3" fill="#c98d4f" stroke={INK} strokeWidth="2.6" />
-          <path d="M26 89 H46" stroke={INK} strokeWidth="1.4" opacity="0.5" />
+        <svg width="64" height="100" viewBox="0 0 64 100">
+          <rect x="16" y="4" width="32" height="14" fill={REDSTONE} stroke={INK} strokeWidth="3" />
+          <rect x="10" y="18" width="44" height="16" fill={GOLD} stroke={INK} strokeWidth="3" />
+          <rect x="6" y="34" width="52" height="16" fill={DIAMOND} stroke={INK} strokeWidth="3" />
+          <rect x="10" y="50" width="44" height="14" fill={EMERALD} stroke={INK} strokeWidth="3" />
+          <rect x="16" y="4" width="32" height="4" fill="#ffffff" opacity="0.3" />
+          <path d="M22 70 L18 82 M42 70 L46 82" stroke={INK} strokeWidth="2.4" strokeLinecap="square" />
+          <rect x="16" y="82" width="32" height="16" fill={WOOD} stroke={INK} strokeWidth="3" />
+          <rect x="16" y="82" width="32" height="4" fill={WOOD_DK} />
         </svg>
       </div>
     </div>
   );
 }
 
-/* ---------------------------------- kite ----------------------------------- */
+/* ----------------------------------- gem ------------------------------------ */
+/* Replaces the kite — a floating faceted gem, bobbing on the same string. */
 
-function Kite({ className, dur = 5, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
+function Gem({ className, dur = 5, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
   return (
     <div className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
       <div className="kite-bob" style={{ "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties}>
-        <svg width="56" height="96" viewBox="0 0 56 96">
-          <path d="M28 2 L52 30 L28 62 L4 30 Z" fill="#3d9b5f" stroke={INK} strokeWidth="3" strokeLinejoin="round" />
-          <path d="M28 2 L28 62 M4 30 L52 30" stroke={INK} strokeWidth="1.6" opacity="0.6" />
-          <path d="M28 62 C24 72 34 76 30 84 C27 90 20 88 18 94" fill="none" stroke={INK} strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M26 70 l6 3 l-6 3 Z M30 82 l6 3 l-6 3 Z" fill="#e2694f" stroke={INK} strokeWidth="1.4" />
+        <svg width="52" height="66" viewBox="0 0 52 66">
+          <polygon points="26,2 48,20 26,50 4,20" fill={DIAMOND} stroke={INK} strokeWidth="3" strokeLinejoin="miter" />
+          <polygon points="26,2 34,20 26,50 18,20" fill={DIAMOND_DK} opacity="0.55" />
+          <polygon points="26,2 48,20 34,20" fill="#eafeff" opacity="0.65" />
+          <path d="M26 50 C22 56 30 58 27 64" stroke={INK} strokeWidth="2" fill="none" strokeLinecap="square" />
         </svg>
       </div>
     </div>
@@ -203,21 +240,20 @@ function Kite({ className, dur = 5, delay = 0 }: { className?: string; dur?: num
 
 /* ------------------------------- butterflies ------------------------------- */
 
-function Butterfly({ className, dur = 7, delay = 0, tone = "#e2694f" }: { className?: string; dur?: number; delay?: number; tone?: string }) {
+function Butterfly({ className, dur = 7, delay = 0, tone = REDSTONE }: { className?: string; dur?: number; delay?: number; tone?: string }) {
   return (
     <div className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
       <div className="butterfly-drift" style={{ "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties}>
-        <svg width="30" height="26" viewBox="0 0 30 26">
+        <svg width="28" height="24" viewBox="0 0 28 24">
           <g className="butterfly-wing">
-            <path d="M15 13 C8 2 1 4 2 10 C3 15 9 15 15 13 Z" fill={tone} stroke={INK} strokeWidth="1.8" />
-            <path d="M15 13 C8 16 2 22 6 24 C10 26 14 20 15 13 Z" fill={tone} stroke={INK} strokeWidth="1.8" opacity="0.8" />
+            <rect x="2" y="2" width="11" height="9" fill={tone} stroke={INK} strokeWidth="1.8" />
+            <rect x="4" y="12" width="8" height="7" fill={tone} stroke={INK} strokeWidth="1.8" opacity="0.85" />
           </g>
-          <g className="butterfly-wing" style={{ transformOrigin: "15px 13px", transform: "scaleX(-1)", transformBox: "fill-box" }}>
-            <path d="M15 13 C8 2 1 4 2 10 C3 15 9 15 15 13 Z" fill={tone} stroke={INK} strokeWidth="1.8" />
-            <path d="M15 13 C8 16 2 22 6 24 C10 26 14 20 15 13 Z" fill={tone} stroke={INK} strokeWidth="1.8" opacity="0.8" />
+          <g className="butterfly-wing" style={{ transformOrigin: "14px 12px", transform: "scaleX(-1)", transformBox: "fill-box" }}>
+            <rect x="2" y="2" width="11" height="9" fill={tone} stroke={INK} strokeWidth="1.8" />
+            <rect x="4" y="12" width="8" height="7" fill={tone} stroke={INK} strokeWidth="1.8" opacity="0.85" />
           </g>
-          <ellipse cx="15" cy="14" rx="1.6" ry="6" fill={INK} />
-          <path d="M14 8 C13 6 12 5 11 4 M16 8 C17 6 18 5 19 4" stroke={INK} strokeWidth="1.2" strokeLinecap="round" />
+          <rect x="13" y="3" width="2" height="17" fill={INK} />
         </svg>
       </div>
     </div>
@@ -230,13 +266,14 @@ function Bee({ className, dur = 9, delay = 0 }: { className?: string; dur?: numb
   return (
     <div className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
       <div className="bee-fly" style={{ "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties}>
-        <svg width="30" height="24" viewBox="0 0 30 24">
-          <ellipse className="bee-wing" cx="12" cy="6" rx="6" ry="4" fill="#eaf6ff" stroke={INK} strokeWidth="1.4" opacity="0.9" />
-          <ellipse className="bee-wing" cx="19" cy="5" rx="5" ry="3.4" fill="#eaf6ff" stroke={INK} strokeWidth="1.4" opacity="0.8" style={{ animationDelay: "0.06s" }} />
-          <ellipse cx="15" cy="14" rx="9" ry="7" fill="#ffd23f" stroke={INK} strokeWidth="2.2" />
-          <path d="M11 8 C10 12 10 17 11 20 M16 7.4 C15.4 12 15.4 16.5 16 20.8 M21 9 C20.5 12 20.5 16 21 19" stroke={INK} strokeWidth="2.4" strokeLinecap="round" />
-          <circle cx="24.5" cy="13" r="1.3" fill={INK} />
-          <path d="M24 20 L27 22" stroke={INK} strokeWidth="2" strokeLinecap="round" />
+        <svg width="28" height="22" viewBox="0 0 28 22">
+          <rect className="bee-wing" x="6" y="1" width="10" height="7" fill="#eaf6ff" stroke={INK} strokeWidth="1.4" opacity="0.9" />
+          <rect className="bee-wing" x="15" y="1" width="8" height="6" fill="#eaf6ff" stroke={INK} strokeWidth="1.4" opacity="0.8" style={{ animationDelay: "0.06s" }} />
+          <rect x="6" y="8" width="16" height="12" fill={GOLD} stroke={INK} strokeWidth="2.2" />
+          <rect x="10" y="8" width="3" height="12" fill={INK} />
+          <rect x="16" y="8" width="3" height="12" fill={INK} />
+          <rect x="21.5" y="17" width="2.6" height="2.6" fill={INK} />
+          <path d="M22 20 L26 22" stroke={INK} strokeWidth="1.8" strokeLinecap="square" />
         </svg>
       </div>
     </div>
@@ -248,12 +285,13 @@ function Bee({ className, dur = 9, delay = 0 }: { className?: string; dur?: numb
 function Snail({ className }: { className?: string }) {
   return (
     <div className={`snail-crawl pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
-      <svg width="46" height="30" viewBox="0 0 46 30">
-        <path d="M3 26 C2 20 8 17 14 18 L34 21 C40 22 43 25 42 27 Z" fill="#f0c987" stroke={INK} strokeWidth="2.4" strokeLinejoin="round" />
-        <path d="M34 21 C36 15 38 11 40 8" stroke={INK} strokeWidth="2.4" fill="none" strokeLinecap="round" />
-        <circle cx="40.5" cy="6.5" r="2" fill={INK} />
-        <circle cx="21" cy="14" r="9.5" fill="#c98d4f" stroke={INK} strokeWidth="2.6" />
-        <path d="M15.5 14 a5.5 5.5 0 1 1 8 5" fill="none" stroke={INK} strokeWidth="2" strokeLinecap="round" />
+      <svg width="44" height="28" viewBox="0 0 44 28">
+        <rect x="2" y="20" width="34" height="6" fill={GOLD} stroke={INK} strokeWidth="2.2" />
+        <path d="M32 10 L38 4" stroke={INK} strokeWidth="2.2" strokeLinecap="square" />
+        <rect x="36.5" y="1.5" width="3" height="3" fill={INK} />
+        <rect x="12" y="6" width="18" height="18" fill={WOOD} stroke={INK} strokeWidth="2.4" />
+        <rect x="16" y="10" width="10" height="4" fill={WOOD_DK} />
+        <rect x="18" y="15" width="6" height="4" fill={WOOD_DK} />
       </svg>
     </div>
   );
@@ -261,20 +299,20 @@ function Snail({ className }: { className?: string }) {
 
 /* ------------------------------- falling leaves ---------------------------- */
 
-function FallLeaf({ left, dur, delay, size = 17, tone = "#6fae63" }: { left: string; dur: number; delay: number; size?: number; tone?: string }) {
+function FallLeaf({ left, dur, delay, size = 17, tone = LEAF }: { left: string; dur: number; delay: number; size?: number; tone?: string }) {
   return (
     <span className="leaf-fall-soft" style={{ left, "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties} aria-hidden="true">
       <span className="leaf-sway-soft" style={{ "--sway": `${3 + (dur % 3)}s`, "--amp": "16px" } as CSSProperties}>
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" opacity="0.8">
-          <path d="M12 2.6C7.6 6.4 5.2 11 12 21.4C18.8 11 16.4 6.4 12 2.6Z" fill={tone} stroke={INK} strokeWidth="1.6" />
-          <path d="M12 5.5V18.5" stroke="rgba(255,255,255,0.55)" strokeWidth="0.9" strokeLinecap="round" />
+        <svg width={size} height={size} viewBox="0 0 24 24" opacity="0.85">
+          <rect x="4" y="4" width="16" height="16" fill={tone} stroke={INK} strokeWidth="2" />
+          <rect x="4" y="4" width="16" height="5" fill="#ffffff" opacity="0.28" />
         </svg>
       </span>
     </span>
   );
 }
 
-/* ------------------------------- sparkles & puffs -------------------------- */
+/* ------------------------------- sparkles & blocks -------------------------- */
 
 function Sparkle({ className, dur = 3, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
   return (
@@ -284,22 +322,21 @@ function Sparkle({ className, dur = 3, delay = 0 }: { className?: string; dur?: 
       style={{ "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties}
       aria-hidden="true"
     >
-      <path d="M12 2 L14.2 9.8 L22 12 L14.2 14.2 L12 22 L9.8 14.2 L2 12 L9.8 9.8 Z" fill="#fffdf2" stroke="#e8d48a" strokeWidth="1" />
+      <rect x="10" y="0" width="4" height="24" fill="#e6c9ff" />
+      <rect x="0" y="10" width="24" height="4" fill="#e6c9ff" />
+      <rect x="9" y="9" width="6" height="6" fill="#ffffff" />
     </svg>
   );
 }
 
-function Puff({ className, dur = 18, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
+function FloatBlock({ className, dur = 18, delay = 0 }: { className?: string; dur?: number; delay?: number }) {
   return (
     <div className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
       <div className="puff-drift" style={{ "--dur": `${dur}s`, "--delay": `${delay}s` } as CSSProperties}>
-        <svg width="26" height="26" viewBox="0 0 26 26" opacity="0.85">
-          <circle cx="13" cy="13" r="3" fill="#fdfcf3" stroke={INK} strokeWidth="1.4" />
-          <path d="M13 10 V4 M13 16 V22 M10 13 H4 M16 13 H22 M11 11 L6.5 6.5 M15 11 L19.5 6.5 M11 15 L6.5 19.5 M15 15 L19.5 19.5" stroke={INK} strokeWidth="1.2" strokeLinecap="round" />
-          <circle cx="13" cy="3.4" r="1.4" fill="#fdfcf3" stroke={INK} strokeWidth="1" />
-          <circle cx="13" cy="22.6" r="1.4" fill="#fdfcf3" stroke={INK} strokeWidth="1" />
-          <circle cx="3.4" cy="13" r="1.4" fill="#fdfcf3" stroke={INK} strokeWidth="1" />
-          <circle cx="22.6" cy="13" r="1.4" fill="#fdfcf3" stroke={INK} strokeWidth="1" />
+        <svg width="22" height="22" viewBox="0 0 22 22" opacity="0.9">
+          <polygon points="11,1 20,6 11,11 2,6" fill={STONE_LT} stroke={INK} strokeWidth="1.2" strokeLinejoin="miter" />
+          <polygon points="2,6 11,11 11,20 2,15" fill={STONE} stroke={INK} strokeWidth="1.2" strokeLinejoin="miter" />
+          <polygon points="20,6 11,11 11,20 20,15" fill={STONE_DK} stroke={INK} strokeWidth="1.2" strokeLinejoin="miter" />
         </svg>
       </div>
     </div>
@@ -313,30 +350,30 @@ function AppleTree({ className, sway = 7, delay = 0, flip = false }: { className
     <div className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
       <div className="tree-sway" style={{ "--sway": `${sway}s`, "--delay": `${delay}s` } as CSSProperties}>
         <svg width="150" height="170" viewBox="0 0 150 170" style={flip ? { transform: "scaleX(-1)" } : undefined}>
-          <path d="M66 168 C68 140 64 122 60 106 L90 106 C86 122 82 140 84 168 Z" fill="#8a5a3b" stroke={INK} strokeWidth="4" strokeLinejoin="round" />
-          <path d="M66 130 C56 126 50 120 46 112" stroke={INK} strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.5" />
-          <circle cx="75" cy="62" r="52" fill="#4f8f4f" stroke={INK} strokeWidth="4.5" />
-          <circle cx="36" cy="84" r="30" fill="#5fa35c" stroke={INK} strokeWidth="4" />
-          <circle cx="114" cy="84" r="30" fill="#5fa35c" stroke={INK} strokeWidth="4" />
-          <circle cx="60" cy="40" r="10" fill="#7cbf72" opacity="0.9" />
-          <circle cx="96" cy="52" r="7" fill="#7cbf72" opacity="0.8" />
-          <circle cx="52" cy="76" r="8" fill="#e2694f" stroke={INK} strokeWidth="2.6" />
-          <circle cx="92" cy="70" r="8" fill="#e2694f" stroke={INK} strokeWidth="2.6" />
-          <circle cx="72" cy="96" r="8" fill="#e2694f" stroke={INK} strokeWidth="2.6" />
+          <rect x="63" y="96" width="24" height="72" fill={WOOD} stroke={INK} strokeWidth="4" />
+          <rect x="63" y="96" width="8" height="72" fill={WOOD_DK} opacity="0.6" />
+          <rect x="16" y="14" width="118" height="92" fill={LEAF} stroke={INK} strokeWidth="4.5" />
+          <rect x="16" y="14" width="118" height="20" fill={LEAF_LT} opacity="0.55" />
+          <rect x="16" y="86" width="118" height="20" fill={LEAF_DK} opacity="0.45" />
+          <rect x="30" y="34" width="13" height="13" fill="#e2694f" stroke={INK} strokeWidth="2.2" />
+          <rect x="70" y="26" width="13" height="13" fill="#e2694f" stroke={INK} strokeWidth="2.2" />
+          <rect x="100" y="50" width="13" height="13" fill="#e2694f" stroke={INK} strokeWidth="2.2" />
+          <rect x="46" y="66" width="13" height="13" fill="#e2694f" stroke={INK} strokeWidth="2.2" />
         </svg>
       </div>
     </div>
   );
 }
 
-function Mushroom({ className, cap = "#e2694f" }: { className?: string; cap?: string }) {
+function Mushroom({ className, cap = REDSTONE }: { className?: string; cap?: string }) {
   return (
     <svg viewBox="0 0 40 34" className={`pointer-events-none absolute ${className ?? ""}`} aria-hidden="true">
-      <path d="M14 32 C14 24 14 20 15.5 15 H24.5 C26 20 26 24 26 32 Z" fill="#fdf6e3" stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
-      <path d="M4 17 C4 8 11 2 20 2 C29 2 36 8 36 17 C30 19.5 10 19.5 4 17 Z" fill={cap} stroke={INK} strokeWidth="2.6" strokeLinejoin="round" />
-      <circle cx="13" cy="10" r="2.4" fill="#fdf6e3" />
-      <circle cx="24" cy="7" r="2" fill="#fdf6e3" />
-      <circle cx="29" cy="12.5" r="1.7" fill="#fdf6e3" />
+      <rect x="15" y="15" width="10" height="17" fill="#fdf6e3" stroke={INK} strokeWidth="2.6" />
+      <rect x="4" y="4" width="32" height="14" fill={cap} stroke={INK} strokeWidth="2.6" />
+      <rect x="4" y="4" width="32" height="4" fill="#ffffff" opacity="0.25" />
+      <rect x="10" y="9" width="4" height="4" fill="#fdf6e3" />
+      <rect x="20" y="6" width="4" height="4" fill="#fdf6e3" />
+      <rect x="27" y="10" width="4" height="4" fill="#fdf6e3" />
     </svg>
   );
 }
@@ -344,14 +381,13 @@ function Mushroom({ className, cap = "#e2694f" }: { className?: string; cap?: st
 function Flower({ className, delay = 0, petal = "#ffffff" }: { className?: string; delay?: number; petal?: string }) {
   return (
     <svg viewBox="0 0 24 34" className={`pointer-events-none absolute flower-sway ${className ?? ""}`} style={{ "--delay": `${delay}s` } as CSSProperties} aria-hidden="true">
-      <path d="M12 32 V16" stroke="#3f7d4f" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M12 24 C8 23 6 20 5 17 C9 17 11 19 12 22" fill="#4f8f4f" stroke="#3f7d4f" strokeWidth="1.4" />
-      <circle cx="12" cy="8" r="3.2" fill={petal} stroke={INK} strokeWidth="1.8" />
-      <circle cx="6.8" cy="11" r="3.2" fill={petal} stroke={INK} strokeWidth="1.8" />
-      <circle cx="17.2" cy="11" r="3.2" fill={petal} stroke={INK} strokeWidth="1.8" />
-      <circle cx="8.8" cy="16" r="3.2" fill={petal} stroke={INK} strokeWidth="1.8" />
-      <circle cx="15.2" cy="16" r="3.2" fill={petal} stroke={INK} strokeWidth="1.8" />
-      <circle cx="12" cy="12.4" r="3" fill="#ffd23f" stroke={INK} strokeWidth="1.8" />
+      <rect x="10" y="16" width="4" height="16" fill={LEAF_DK} />
+      <rect x="10" y="22" width="8" height="3" fill={LEAF} />
+      <rect x="6" y="4" width="6" height="6" fill={petal} stroke={INK} strokeWidth="1.6" />
+      <rect x="12" y="4" width="6" height="6" fill={petal} stroke={INK} strokeWidth="1.6" />
+      <rect x="6" y="10" width="6" height="6" fill={petal} stroke={INK} strokeWidth="1.6" />
+      <rect x="12" y="10" width="6" height="6" fill={petal} stroke={INK} strokeWidth="1.6" />
+      <rect x="9" y="7" width="6" height="6" fill={GOLD} stroke={INK} strokeWidth="1.6" />
     </svg>
   );
 }
@@ -359,9 +395,13 @@ function Flower({ className, delay = 0, petal = "#ffffff" }: { className?: strin
 function GrassStrip() {
   return (
     <svg viewBox="0 0 1440 110" preserveAspectRatio="none" className="pointer-events-none absolute inset-x-0 bottom-0 h-[13vh] min-h-[84px] w-full" aria-hidden="true">
-      <path d="M0 54 C180 30 360 44 540 40 C760 36 920 52 1120 44 C1280 38 1380 46 1440 40 L1440 110 L0 110 Z" fill="#6fae63" />
-      <path d="M0 54 C180 30 360 44 540 40 C760 36 920 52 1120 44 C1280 38 1380 46 1440 40" fill="none" stroke={INK} strokeWidth="5" opacity="0.55" />
-      <path d="M0 82 C240 62 480 76 720 70 C960 64 1200 80 1440 68 L1440 110 L0 110 Z" fill="#5f9e55" />
+      <rect x="0" y="34" width="1440" height="76" fill={DIRT} />
+      <rect x="0" y="70" width="1440" height="40" fill={DIRT_DK} opacity="0.5" />
+      <rect x="0" y="34" width="1440" height="18" fill={GRASS} />
+      <rect x="0" y="34" width="1440" height="6" fill={GRASS_DK} opacity="0.45" />
+      {Array.from({ length: 36 }, (_, i) => (
+        <rect key={i} x={i * 40 + 6} y="30" width="10" height="8" fill={GRASS} />
+      ))}
     </svg>
   );
 }
@@ -387,12 +427,12 @@ export function Backdrop() {
       <Bird top="42%" dur={60} delay={-42} scale={0.55} bob={4.2} />
       <Bird top="8%" dur={48} delay={-24} scale={0.75} bob={2.8} flip />
 
-      <PaperPlane className="top-[18vh] left-0" dur={26} delay={-8} />
+      <Arrow className="top-[18vh] left-0" dur={26} delay={-8} />
       <Balloon className="left-[6vw] top-[16vh] fx-extra" />
-      <Kite className="right-[8vw] top-[26vh] fx-extra" dur={5.4} delay={-1.6} />
+      <Gem className="right-[8vw] top-[26vh] fx-extra" dur={5.4} delay={-1.6} />
 
-      <Butterfly className="left-[16vw] bottom-[16vh]" dur={7} delay={-2} tone="#e2694f" />
-      <Butterfly className="right-[20vw] bottom-[13vh] fx-extra" dur={8.4} delay={-4.4} tone="#ffd23f" />
+      <Butterfly className="left-[16vw] bottom-[16vh]" dur={7} delay={-2} tone={REDSTONE} />
+      <Butterfly className="right-[20vw] bottom-[13vh] fx-extra" dur={8.4} delay={-4.4} tone={GOLD} />
       <Bee className="left-[44vw] bottom-[6vh]" dur={10} delay={-2} />
       <Snail className="bottom-[1.5vh] left-0 fx-extra" />
 
@@ -401,25 +441,25 @@ export function Backdrop() {
       <Sparkle className="left-[12vw] top-[42vh] w-[17px]" dur={3.2} delay={-2.6} />
       <Sparkle className="right-[10vw] top-[48vh] w-[13px] fx-extra" dur={2.5} delay={-1.1} />
 
-      <FallLeaf left="4%" dur={26} delay={-4} size={18} tone="#6fae63" />
-      <FallLeaf left="11%" dur={30} delay={-16} size={13} tone="#c9a24b" />
-      <FallLeaf left="90%" dur={24} delay={-9} size={17} tone="#86a878" />
-      <FallLeaf left="95%" dur={32} delay={-22} size={12} tone="#9db89a" />
+      <FallLeaf left="4%" dur={26} delay={-4} size={18} tone={GRASS} />
+      <FallLeaf left="11%" dur={30} delay={-16} size={13} tone={GOLD_DK} />
+      <FallLeaf left="90%" dur={24} delay={-9} size={17} tone={LEAF} />
+      <FallLeaf left="95%" dur={32} delay={-22} size={12} tone={LEAF_LT} />
 
-      <Puff className="left-[24vw] bottom-[9vh] fx-extra" dur={19} delay={-6} />
-      <Puff className="right-[28vw] bottom-[7vh] fx-extra" dur={23} delay={-14} />
+      <FloatBlock className="left-[24vw] bottom-[9vh] fx-extra" dur={19} delay={-6} />
+      <FloatBlock className="right-[28vw] bottom-[7vh] fx-extra" dur={23} delay={-14} />
 
-      {/* the meadow */}
+      {/* the ground */}
       <GrassStrip />
       <AppleTree className="left-[3vw] bottom-[4vh]" sway={7} delay={-2} />
       <AppleTree className="right-[4vw] bottom-[3vh] hidden sm:block" sway={8.2} delay={-5} flip />
       <AppleTree className="left-[30vw] bottom-[2vh] hidden lg:block scale-75 origin-bottom" sway={9} delay={-3.4} />
-      <Mushroom className="left-[16vw] bottom-[2.4vh] w-[42px]" cap="#e2694f" />
-      <Mushroom className="right-[18vw] bottom-[2vh] w-[34px] hidden sm:block" cap="#ffd23f" />
+      <Mushroom className="left-[16vw] bottom-[2.4vh] w-[42px]" cap={REDSTONE} />
+      <Mushroom className="right-[18vw] bottom-[2vh] w-[34px] hidden sm:block" cap={GOLD} />
       <Flower className="left-[22vw] bottom-[2vh] w-[26px]" delay={-0.6} petal="#ffffff" />
       <Flower className="left-[48vw] bottom-[1.6vh] w-[22px]" delay={-1.8} petal="#f4978e" />
       <Flower className="right-[34vw] bottom-[2.2vh] w-[26px] hidden sm:block" delay={-2.6} petal="#ffffff" />
-      <Flower className="right-[8vw] bottom-[1.8vh] w-[20px]" delay={-1.2} petal="#ffd23f" />
+      <Flower className="right-[8vw] bottom-[1.8vh] w-[20px]" delay={-1.2} petal={GOLD} />
       <Flower className="left-[6vw] bottom-[1.7vh] w-[20px] hidden sm:block" delay={-3} petal="#f4978e" />
     </motion.div>
   );
@@ -431,7 +471,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="grain relative min-h-dvh">
       <Backdrop />
-      {/* a soft sun-glow that springs behind the pointer on desktop */}
+      {/* a soft gold glow that springs behind the pointer on desktop */}
       <CursorGlow />
       {/* z-1 > backdrop z-0, and fully transparent — the sky + sun show through */}
       <main className="relative z-[1]">{children}</main>

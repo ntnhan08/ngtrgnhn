@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { AlertTriangle, RefreshCw, Sprout } from "lucide-react";
+import { AlertTriangle, Blocks, RefreshCw } from "lucide-react";
 import { AppShell, Backdrop } from "./components/AppShell";
 import { Toasts } from "./components/Toasts";
 import { ConfirmBody, Modal } from "./components/ui/Primitives";
@@ -100,7 +100,7 @@ function BootErrorScreen({ message }: { message: string }) {
         <span className="chip-square mx-auto h-12 w-12 bg-danger text-white">
           <AlertTriangle size={22} />
         </span>
-        <h1 className="font-display mt-4 text-2xl font-bold text-ink">Failed to open the field guide</h1>
+        <h1 className="font-display mt-4 text-2xl font-bold text-ink">Failed to open the ender chest</h1>
         <p className="mt-2 text-sm font-bold text-muted">{message}</p>
         <button type="button" onClick={() => window.location.reload()} className="btn-comic btn-accent mt-5 px-5 py-2.5 text-sm">
           <RefreshCw size={14} />
@@ -246,7 +246,7 @@ function PageLoader() {
         className="inline-flex h-13 w-13 items-center justify-center rounded-[10px] border-[3px] border-inkline bg-sun p-3 text-ink"
         style={{ boxShadow: "4px 4px 0 var(--shadow-ink)" }}
       >
-        <Sprout size={22} />
+        <Blocks size={22} />
       </motion.span>
     </div>
   );

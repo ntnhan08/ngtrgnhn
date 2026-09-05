@@ -1,4 +1,4 @@
-/* Comic sticker avatar — square, ink outline, hard shadow, slight tilt.
+/* Pixel item-slot avatar — square, dark outline, inset bevel, hard shadow.
  * Falls back to a monogram when no photo is set. */
 import { useEffect, useState } from "react";
 import { resolveAvatarUrl } from "../services/images";
@@ -54,7 +54,7 @@ export function Avatar({
   const [failed, setFailed] = useState(false);
   const palette = avatarPalette(name || "?");
   const showImage = Boolean(url && !failed);
-  const radius = Math.max(8, Math.round(size * 0.14));
+  const radius = Math.max(2, Math.round(size * 0.045));
 
   return (
     <div
@@ -65,10 +65,9 @@ export function Avatar({
         borderRadius: radius,
         border: "3px solid var(--inkline)",
         boxShadow: ring
-          ? "5px 6px 0 var(--shadow-ink), 0 0 0 5px rgba(255,255,250,0.55)"
-          : "4px 4px 0 var(--shadow-ink)",
-        transform: "rotate(-2deg)",
-        background: "#fffaf0",
+          ? "5px 6px 0 var(--shadow-ink), inset 2px 2px 0 rgba(0,0,0,0.3), inset -2px -2px 0 rgba(255,255,255,0.2), 0 0 0 5px var(--raised)"
+          : "4px 4px 0 var(--shadow-ink), inset 2px 2px 0 rgba(0,0,0,0.3), inset -2px -2px 0 rgba(255,255,255,0.2)",
+        background: "var(--raised)",
       }}
       aria-hidden="true"
     >
@@ -90,10 +89,10 @@ export function Avatar({
           }}
         >
           <span
-            className="font-display font-bold text-white"
+            className="font-heading font-black text-white"
             style={{
               fontSize: Math.round(size * 0.36),
-              textShadow: "2px 2px 0 rgba(34,58,43,0.3)",
+              textShadow: "2px 2px 0 rgba(0,0,0,0.4)",
             }}
           >
             {initialsOf(name)}

@@ -99,7 +99,7 @@ export const ContactCard = memo(function ContactCard({
       >
         <Avatar name={contact.fullName} avatarId={contact.avatarId} size={88} ring />
 
-        <h3 className="font-display ink-pop mt-4 line-clamp-1 text-[18px] font-bold tracking-tight text-ink">
+        <h3 className="font-heading ink-pop mt-4 line-clamp-1 text-[18px] font-bold tracking-tight text-ink">
           {contact.fullName}
         </h3>
         {v.relationship.home && (
@@ -177,7 +177,7 @@ export const ContactRow = memo(function ContactRow({ contact }: { contact: Conta
       >
         <Avatar name={contact.fullName} avatarId={contact.avatarId} size={46} />
         <div className="min-w-0 flex-1">
-          <p className="ink-pop font-display truncate text-[15px] font-bold text-ink">{contact.fullName}</p>
+          <p className="ink-pop font-heading truncate text-[15px] font-bold text-ink">{contact.fullName}</p>
           <p className="ink-pop truncate text-xs font-extrabold text-muted">{meta || "No details yet"}</p>
         </div>
         {v.relationship.home && (

@@ -312,7 +312,7 @@ function ProfilePage({ id }: { id: string }) {
                   <InfoRow
                     icon={<Phone size={15} />}
                     label="Phone"
-                    value={<Sensitive value={phone} masked={maskPhone(phone)} />}
+                    value={<Sensitive value={phone} masked={maskPhone(phone)} reveal={config.reveal.phone && !privacy} />}
                     copyValue={privacy ? undefined : phone}
                   />
                 )}
@@ -320,7 +320,7 @@ function ProfilePage({ id }: { id: string }) {
                   <InfoRow
                     icon={<Mail size={15} />}
                     label="Email"
-                    value={<Sensitive value={email} masked={maskEmail(email)} />}
+                    value={<Sensitive value={email} masked={maskEmail(email)} reveal={!privacy} />}
                     copyValue={privacy ? undefined : email}
                   />
                 )}
@@ -353,6 +353,7 @@ function ProfilePage({ id }: { id: string }) {
                 bankName={contact.bank.bankName}
                 accountNumber={contact.bank.accountNumber}
                 privacy={privacy}
+                reveal={config.reveal.bankAccount}
                 showName={v.bankName.full}
                 showAccount={v.bankAccount.full}
               />

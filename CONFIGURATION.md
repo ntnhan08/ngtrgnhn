@@ -27,7 +27,7 @@ app never crashes. A clean template lives in `public/config/config.example.json`
 | `profile.work.position` | string | Job title. |
 | `profile.relationship.status` | `"single" \| "dating" \| "married" \| "complicated" \| "unknown"` | Relationship badge on your card. |
 | `profile.bank.bankName` | string | Bank name (any string; Vietnamese banks suggested in the form). |
-| `profile.bank.accountNumber` | string | Account number — always masked until “Show” is pressed. |
+| `profile.bank.accountNumber` | string | Account number — masked by default; see `reveal` below. |
 | `profile.birthday` | string | `YYYY-MM-DD`. |
 | `profile.address` | string | Home address, free text. |
 | `profile.notes` | string | Free-form notes. |
@@ -52,6 +52,18 @@ be home-only, full-only, both, or neither.
 Keys: `phone` · `email` · `education` (school) · `major` · `work` (section) · `company` ·
 `position` · `relationship` · `bank` (section) · `bankName` · `bankAccount` · `birthday` ·
 `address` · `notes`
+
+## reveal — full digits vs masked
+
+```json
+"reveal": { "phone": false, "bankAccount": false }
+```
+
+Controls whether the phone number and bank account show their **full digits** (`true`) or stay
+**masked with dots** (`false`) wherever `visibility` already allows them to appear at all. This is
+the owner's policy, set once here — it is independent of the viewer's own privacy-mode toggle
+(the eye icon), which can still force masking on top of `true`, but can never un-mask a field set
+to `false` here. Both must allow reveal for the full value to actually show.
 
 ## social — icon-only links
 

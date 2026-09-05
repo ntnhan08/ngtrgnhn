@@ -50,6 +50,16 @@ export interface VisibilityScope {
 }
 export type VisibilityMap = Record<VisibilityKey, VisibilityScope>;
 
+/** Per-field control over whether a masked number sequence (phone, bank
+ *  account) may ever render in full digits. This is the *owner's* policy,
+ *  set once in config.json — independent of the viewer's own privacy-mode
+ *  toggle, which can still force masking even when a field allows reveal,
+ *  but can never un-mask a field the owner has set to false here. */
+export interface RevealMap {
+  phone: boolean;
+  bankAccount: boolean;
+}
+
 export type ThemeMode = "dark" | "light" | "system";
 export type LayoutMode = "grid" | "list";
 export type AnimationMode = "full" | "reduced" | "off";
@@ -70,6 +80,7 @@ export interface AppConfig {
     notes: string;
   };
   visibility: VisibilityMap;
+  reveal: RevealMap;
   social: Record<SocialNetworkId, SocialLink>;
   features: {
     search: boolean;

@@ -53,6 +53,11 @@
     "notes": { "home": false, "full": false }
   },
 
+  "reveal": {
+    "phone": false,
+    "bankAccount": false
+  },
+
   "social": {
     "facebook": { "enabled": true, "url": "https://facebook.com/ngtrgnhn" },
     "instagram": { "enabled": false, "url": "" },

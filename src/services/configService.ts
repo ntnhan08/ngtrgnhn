@@ -50,6 +50,7 @@ export const DEFAULT_CONFIG: AppConfig = {
     address: { home: false, full: true },
     notes: { home: false, full: true },
   },
+  reveal: { phone: false, bankAccount: false },
   social: {
     facebook: { enabled: false, url: "" }, instagram: { enabled: false, url: "" },
     tiktok: { enabled: false, url: "" }, youtube: { enabled: false, url: "" },
@@ -148,6 +149,15 @@ export function validateConfig(raw: unknown): ConfigIssue[] {
           expect(`visibility.${key}.full`, entry.full, isBool, "true or false");
         }
       }
+  }
+
+  const reveal = raw.reveal;
+  if (reveal !== undefined) {
+    if (!isObject(reveal)) issues.push({ path: "reveal", message: "must be an object." });
+    else {
+      expect("reveal.phone", reveal.phone, isBool, "true or false");
+      expect("reveal.bankAccount", reveal.bankAccount, isBool, "true or false");
+    }
   }
 
   const social = raw.social;

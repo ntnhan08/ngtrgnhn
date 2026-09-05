@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { CursorGlow } from "./Fx";
+import { DayCritters, DayNightSky, Moon, NightCritters, Stars, useDayPhase } from "./Critters";
 
 const INK = "#2b2014";
 const PAPER = "#fdfcf3";
@@ -410,31 +411,44 @@ function GrassStrip() {
 
 export function Backdrop() {
   const parallax = useSceneParallax();
+  const phase = useDayPhase();
+  const daytime = phase === "dawn" || phase === "day";
+
   return (
     <motion.div className="app-backdrop pointer-events-none" style={{ x: parallax.x, y: parallax.y }} aria-hidden="true">
-      <Sun />
-      <Rainbow className="left-[2vw] bottom-[10vh] w-[24vw] min-w-[210px] opacity-55" />
+      <DayNightSky />
+      {daytime ? <Sun /> : (
+        <>
+          <Stars />
+          <Moon />
+        </>
+      )}
 
-      {/* drifting sky life */}
-      <Cloud top="9%" dur={95} delay={-20} scale={1} opacity={0.95} />
-      <Cloud top="24%" dur={140} delay={-80} scale={0.66} opacity={0.8} />
-      <Cloud top="4%" dur={120} delay={-55} scale={0.85} opacity={0.85} />
-      <Cloud top="58%" dur={160} delay={-110} scale={0.5} opacity={0.55} />
+      {daytime && (
+        <>
+          <Rainbow className="left-[2vw] bottom-[10vh] w-[24vw] min-w-[210px] opacity-55" />
 
-      <Bird top="14%" dur={38} delay={-6} scale={1} bob={3} />
-      <Bird top="30%" dur={52} delay={-30} scale={0.7} bob={3.8} />
-      <Bird top="20%" dur={44} delay={-18} scale={0.85} bob={3.2} flip />
-      <Bird top="42%" dur={60} delay={-42} scale={0.55} bob={4.2} />
-      <Bird top="8%" dur={48} delay={-24} scale={0.75} bob={2.8} flip />
+          <Cloud top="9%" dur={95} delay={-20} scale={1} opacity={0.95} />
+          <Cloud top="24%" dur={140} delay={-80} scale={0.66} opacity={0.8} />
+          <Cloud top="4%" dur={120} delay={-55} scale={0.85} opacity={0.85} />
+          <Cloud top="58%" dur={160} delay={-110} scale={0.5} opacity={0.55} />
 
-      <Arrow className="top-[18vh] left-0" dur={26} delay={-8} />
-      <Balloon className="left-[6vw] top-[16vh] fx-extra" />
-      <Gem className="right-[8vw] top-[26vh] fx-extra" dur={5.4} delay={-1.6} />
+          <Bird top="14%" dur={38} delay={-6} scale={1} bob={3} />
+          <Bird top="30%" dur={52} delay={-30} scale={0.7} bob={3.8} />
+          <Bird top="20%" dur={44} delay={-18} scale={0.85} bob={3.2} flip />
+          <Bird top="42%" dur={60} delay={-42} scale={0.55} bob={4.2} />
+          <Bird top="8%" dur={48} delay={-24} scale={0.75} bob={2.8} flip />
 
-      <Butterfly className="left-[16vw] bottom-[16vh]" dur={7} delay={-2} tone={REDSTONE} />
-      <Butterfly className="right-[20vw] bottom-[13vh] fx-extra" dur={8.4} delay={-4.4} tone={GOLD} />
-      <Bee className="left-[44vw] bottom-[6vh]" dur={10} delay={-2} />
-      <Snail className="bottom-[1.5vh] left-0 fx-extra" />
+          <Arrow className="top-[18vh] left-0" dur={26} delay={-8} />
+          <Balloon className="left-[6vw] top-[16vh] fx-extra" />
+          <Gem className="right-[8vw] top-[26vh] fx-extra" dur={5.4} delay={-1.6} />
+
+          <Butterfly className="left-[16vw] bottom-[16vh]" dur={7} delay={-2} tone={REDSTONE} />
+          <Butterfly className="right-[20vw] bottom-[13vh] fx-extra" dur={8.4} delay={-4.4} tone={GOLD} />
+          <Bee className="left-[44vw] bottom-[6vh]" dur={10} delay={-2} />
+          <Snail className="bottom-[1.5vh] left-0 fx-extra" />
+        </>
+      )}
 
       <Sparkle className="left-[30vw] top-[20vh] w-[20px]" dur={2.8} delay={-0.6} />
       <Sparkle className="right-[33vw] top-[30vh] w-[15px] fx-extra" dur={3.6} delay={-1.8} />
@@ -461,6 +475,13 @@ export function Backdrop() {
       <Flower className="right-[34vw] bottom-[2.2vh] w-[26px] hidden sm:block" delay={-2.6} petal="#ffffff" />
       <Flower className="right-[8vw] bottom-[1.8vh] w-[20px]" delay={-1.2} petal={GOLD} />
       <Flower className="left-[6vw] bottom-[1.7vh] w-[20px] hidden sm:block" delay={-3} petal="#f4978e" />
+
+      {/* ground critters — the real-time day/night roster */}
+      {daytime ? (
+        <DayCritters className="pointer-events-none absolute inset-0" />
+      ) : (
+        <NightCritters className="pointer-events-none absolute inset-0" />
+      )}
     </motion.div>
   );
 }

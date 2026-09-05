@@ -94,11 +94,22 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 html,
 body,
 #root {
   height: 100%;
+}
+
+/* Screen stays horizontally locked on every device — no side drag/pan/swipe,
+   vertical scroll untouched. touch-action handles touch/pen drag gestures,
+   overscroll-behavior-x kills the rubber-band bounce + browser back/forward
+   swipe-nav, and overflow-x is the belt-and-braces fallback for mouse/trackpad. */
+html,
+body {
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
 }
 
 body {
@@ -110,6 +121,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
 ::selection {
@@ -265,15 +277,12 @@ body {
 }
 
 /* -------------------------------- backdrop ------------------------------- */
-/* The painted scene lives at z-0; the app content (main) sits one step above
-   at z-1 and is fully transparent, so nothing can ever cover the scene. */
+/* Positioning only — DayNightSky (a React child) owns the actual gradient,
+   crossfaded in real time between dawn/day/dusk/night. */
 .app-backdrop {
   position: fixed;
   inset: -36px; /* overscanned so parallax never reveals an edge */
   z-index: 0;
-  background:
-    radial-gradient(760px 760px at calc(100% - 96px) 44px, color-mix(in srgb, var(--sun) 45%, transparent), transparent 62%),
-    linear-gradient(180deg, var(--sky-top) 0%, var(--bg) 42%, var(--bg-deep) 100%);
   will-change: transform;
   transform: translateZ(0);
 }
@@ -393,6 +402,29 @@ body {
 @keyframes snail-crawl {
   from { transform: translateX(-10vw); }
   to { transform: translateX(106vw); }
+}
+
+/* ground critters (day + night roster) — walk left-to-right at ground
+   level; animation-direction: reverse (set inline per-sprite) walks the
+   mirrored ones right-to-left instead, so they travel the way they face. */
+.walk-across {
+  position: absolute;
+  animation: walk-across var(--dur, 40s) linear var(--delay, 0s) infinite;
+  will-change: transform;
+}
+@keyframes walk-across {
+  from { transform: translateX(-10vw); }
+  to { transform: translateX(108vw); }
+}
+.leg-a, .leg-b {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: leg-step 0.5s ease-in-out infinite alternate;
+}
+.leg-b { animation-delay: 0.25s; }
+@keyframes leg-step {
+  from { transform: translateY(0) scaleY(1); }
+  to { transform: translateY(-1.5px) scaleY(0.82); }
 }
 
 .leaf-fall-soft {
@@ -571,11 +603,11 @@ input[type="date"] { color-scheme: inherit; }
   html { scroll-behavior: auto; }
   .sun-rays, .cloud-drift, .bird-bob, .bird-wing, .tree-sway, .flower-sway,
   .sticker-bob, .balloon-bob, .kite-bob, .butterfly-drift, .butterfly-wing,
-  .bee-fly, .bee-wing, .sparkle-twinkle {
+  .bee-fly, .bee-wing, .sparkle-twinkle, .leg-a, .leg-b {
     animation: none !important;
   }
   .bird-fly, .plane-fly, .snail-crawl, .leaf-fall-soft, .puff-drift,
-  .cursor-glow {
+  .cursor-glow, .walk-across {
     display: none;
   }
   .shine::after { display: none; }

@@ -272,29 +272,33 @@ export function EmptyState({
 
 /* ------------------------------ Sensitive text ----------------------------- */
 
-/** Animates smoothly between a real value and its privacy mask. */
+/** Animates smoothly between a real value and its privacy mask.
+ *  `reveal` is explicit — it used to be inferred by comparing value!==masked,
+ *  which is true for virtually any real value, so it always rendered the
+ *  masked string. Now the caller decides. */
 export function Sensitive({
   value,
   masked,
+  reveal,
   className,
 }: {
   value: string;
   masked: string;
+  reveal: boolean;
   className?: string;
 }) {
-  const isMasked = value !== masked;
   return (
     <span className={cn("relative inline-block", className)}>
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
-          key={isMasked ? "masked" : "plain"}
+          key={reveal ? "plain" : "masked"}
           initial={{ opacity: 0, y: 5, filter: "blur(3px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           exit={{ opacity: 0, y: -5, filter: "blur(3px)" }}
           transition={{ duration: 0.18, ease: "easeOut" }}
           className="inline-block"
         >
-          {isMasked ? masked : value}
+          {reveal ? value : masked}
         </motion.span>
       </AnimatePresence>
     </span>

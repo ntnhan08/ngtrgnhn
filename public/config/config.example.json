@@ -48,6 +48,11 @@
     "notes": { "home": false, "full": false }
   },
 
+  "reveal": {
+    "phone": false,
+    "bankAccount": false
+  },
+
   "social": {
     "facebook": { "enabled": true, "url": "https://facebook.com/your.profile" },
     "instagram": { "enabled": true, "url": "https://instagram.com/your.handle" },

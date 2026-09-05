@@ -242,7 +242,7 @@ export function Home() {
               <Row
                 icon={<Phone size={17} />}
                 label="Phone"
-                value={<Sensitive value={phone} masked={maskPhone(phone)} />}
+                value={<Sensitive value={phone} masked={maskPhone(phone)} reveal={config.reveal.phone && !privacy} />}
                 copyValue={privacy ? undefined : phone}
               />
             )}
@@ -250,7 +250,7 @@ export function Home() {
               <Row
                 icon={<Mail size={17} />}
                 label="Email"
-                value={<Sensitive value={email} masked={maskEmail(email)} />}
+                value={<Sensitive value={email} masked={maskEmail(email)} reveal={!privacy} />}
                 copyValue={privacy ? undefined : email}
               />
             )}
@@ -259,6 +259,7 @@ export function Home() {
                 bankName={owner.bank.bankName}
                 accountNumber={owner.bank.accountNumber}
                 privacy={privacy}
+                reveal={config.reveal.bankAccount}
                 showName={v.bankName.home}
                 showAccount={v.bankAccount.home}
               />

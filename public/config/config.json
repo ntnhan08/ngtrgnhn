@@ -54,8 +54,8 @@
   },
 
   "reveal": {
-    "phone": false,
-    "bankAccount": false
+    "phone": true,
+    "bankAccount": true
   },
 
   "social": {
